@@ -1,0 +1,55 @@
+<view version="2.0">
+	<!-- <title>Volume Received per Month</title> -->
+	
+	<dataSource id="ds_chart_open_closed_mon" type="grouping">
+		<sql dialect="sqlserver">
+		SELECT wr_id,
+    		'Opened' as transaction_type,
+			CONVERT(
+				VARCHAR(7),
+				DateAdd(month, DateDiff(month, 0, date_requested), 0),
+				120
+			) AS calendar_month
+		FROM DGS_Archibus.afm.wrhwr
+		WHERE prob_type IS NOT NULL
+			AND prob_type != 'TEST(DO NOT USE)'
+			AND date_requested &gt;= DATEADD(yy, DATEDIFF(yy, 0, GETDATE()), 0)
+		UNION
+		SELECT wr_id,
+			'Closed' as transaction_type,
+			CONVERT(
+				VARCHAR(7),
+				DateAdd(month, DateDiff(month, 0, date_closed), 0),
+				120
+			) AS calendar_month
+		FROM DGS_Archibus.afm.wrhwr
+		WHERE prob_type IS NOT NULL
+			AND prob_type != 'TEST(DO NOT USE)'
+			AND date_requested &gt;= DATEADD(yy, DATEDIFF(yy, 0, GETDATE()), 0)
+		</sql>
+		<table name="wrhwr" role="main" />
+		<field name="calendar_month" dataType="text" size="7" groupBy="true" />
+		<field name="count_wr" formula="count" baseField="wrhwr.wr_id" dataType="number" decimals="0" />
+	</dataSource>
+	
+	<panel 	id="chart_volume" 
+    		type="htmlChart" 
+    		controlType="columnChart" 
+    		dataSource="ds_chart_open_closed_mon" 
+    		showLegendOnLoad="true"
+    		showLegendAsPopUp="false" 
+    		legendLocation="bottom"
+    		showDataTips="true" 
+    		backgroundColor="0xc6e2ff">
+        <title>Request Volume by Month</title>
+		
+        <groupingAxis dataSource="ds_chart_volume" 
+		              table="wrhwr" 
+					  field="calendar_month" showLabel="true" labelRotation="45">
+            <title>Month</title>
+        </groupingAxis>
+        <dataAxis dataSource="ds_chart_volume" table="wrhwr" field="count_wr" showLabel="true">
+            <title>Count</title>
+        </dataAxis>
+    </panel>
+</view>
