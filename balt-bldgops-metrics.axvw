@@ -1,0 +1,41 @@
+<view version="2.0">
+	<!-- <title>Work Request Metrics</title> -->
+
+	<dataSource id="ds_wrhwr_metrics">
+		<sql dialect="sqlserver">
+			SELECT 'Opened in Last 30 Days' AS label, COUNT(*) as count_wr
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_requested &gt;= DateAdd(day, -30, getDate())
+			UNION
+			SELECT 'Closed in Last 30 Days' AS label, COUNT(*) as count_wr
+			FROM wrhw
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND status = 'Clo'
+				AND date_closed &gt;= DateAdd(day, -30, getDate())
+		</sql>
+		<table name="wrhwr"
+			role="main" />
+		<field name="label"
+			dataType="text" />
+		<field name="count_wr"
+			dataType="number"
+			decimals="0" />
+	</dataSource>
+
+	<panel id="metrics_grid"
+		type="grid"
+		controlType="reportGrid"
+		dataSource="ds_wrhwr_metrics">
+		<title>Work Request Metrics</title>
+
+		<field name="label">
+			<title>Metric</title>
+		</field>
+		<field name="count_wr">
+			<title>Count</title>
+		</field>
+	</panel>
+</view>
