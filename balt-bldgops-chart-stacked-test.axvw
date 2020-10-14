@@ -1,0 +1,100 @@
+<view version="2.0">
+	<!-- <title>Work Requests Chart</title> -->
+
+	<dataSource id="ds_chart_metrics" >
+		<sql dialect="sqlserver">
+			SELECT '30' AS timespan, 
+					'Opened' AS action,
+			        COUNT(*) as count_wr
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -1, getDate()))
+			UNION
+			SELECT '30' AS timespan, 
+				   'Closed' AS action,
+			        COUNT(*) as count_wr
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_closed &gt;= DateAdd(day, -30,  DateAdd(year, -1, getDate()))
+
+			UNION
+
+			SELECT '60' AS timespan, 
+					'Opened' AS action,
+			        COUNT(*) as count_wr
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_requested &gt;= DateAdd(day, -60, DateAdd(year, -1, getDate()))
+			UNION
+			SELECT '60' AS timespan, 
+				   'Closed' AS action,
+			        COUNT(*) as count_wr
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_closed &gt;= DateAdd(day, -60,  DateAdd(year, -1, getDate()))
+
+			UNION
+			
+			SELECT '90' AS timespan, 
+					'Opened' as action,
+			        COUNT(*) as count_wr
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_requested &gt;= DateAdd(day, -90, DateAdd(year, -1, getDate()))
+			UNION
+			SELECT '90' AS timespan, 
+					'Closed' as action,
+			        COUNT(*) as count_wr
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_closed &gt;= DateAdd(day, -90, DateAdd(year, -1, getDate()))
+		</sql>
+		<table name="wrhwr"
+			role="main" />
+		<field name="timespan"
+			dataType="text" />
+		<field name="action"
+			dataType="text" />
+		<field name="count_wr"
+			dataType="number"
+			decimals="0" />
+	</dataSource>
+
+	<panel id="chart_metrics"
+		type="htmlChart"
+		controlType="columnChart"
+		dataSource="ds_chart_metrics"
+		showLegendOnLoad="true"
+		showLegendAsPopUp="false"
+		legendLocation="top"
+		showDataTips="true"
+		backgroundColor="0xc6e2ff">
+		<title>Work Request Volume</title>
+
+		<groupingAxis 
+			table="wrhwr"
+			field="timespan"
+			labelRotation="0">
+			<title translatable="true">Time period</title>
+		</groupingAxis>
+
+		<secondaryGroupingAxis 
+			table="wrhwr"
+			field="action">
+			<title translatable="true">Action</title>
+		</secondaryGroupingAxis>
+
+		<dataAxis 
+			table="wrhwr"
+			field="count_wr"
+			showLabel="true">
+			<title translatable="true">Count</title>
+		</dataAxis>
+	</panel>
+</view>
