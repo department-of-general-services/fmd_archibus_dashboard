@@ -1,9 +1,9 @@
 <view version="2.0">
 	<!-- <title>Work Requests Chart</title> -->
 
-	<dataSource id="ds_chart_metrics" >
+	<dataSource id="ds_chart_metrics">
 		<sql dialect="sqlserver">
-			SELECT '30' AS timespan, 
+			SELECT '30 Days' AS timespan, 
 					'Opened' AS action,
 			        COUNT(*) as count_wr
 			FROM wrhwr
@@ -11,7 +11,7 @@
 				AND prob_type != 'TEST(DO NOT USE)'
 				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -1, getDate()))
 			UNION
-			SELECT '30' AS timespan, 
+			SELECT '30 Days' AS timespan, 
 				   'Closed' AS action,
 			        COUNT(*) as count_wr
 			FROM wrhwr
@@ -21,7 +21,7 @@
 
 			UNION
 
-			SELECT '60' AS timespan, 
+			SELECT '60 Days' AS timespan, 
 					'Opened' AS action,
 			        COUNT(*) as count_wr
 			FROM wrhwr
@@ -29,7 +29,7 @@
 				AND prob_type != 'TEST(DO NOT USE)'
 				AND date_requested &gt;= DateAdd(day, -60, DateAdd(year, -1, getDate()))
 			UNION
-			SELECT '60' AS timespan, 
+			SELECT '60 Days' AS timespan, 
 				   'Closed' AS action,
 			        COUNT(*) as count_wr
 			FROM wrhwr
@@ -39,7 +39,7 @@
 
 			UNION
 			
-			SELECT '90' AS timespan, 
+			SELECT '90 Days' AS timespan, 
 					'Opened' as action,
 			        COUNT(*) as count_wr
 			FROM wrhwr
@@ -47,7 +47,7 @@
 				AND prob_type != 'TEST(DO NOT USE)'
 				AND date_requested &gt;= DateAdd(day, -90, DateAdd(year, -1, getDate()))
 			UNION
-			SELECT '90' AS timespan, 
+			SELECT '90 Days' AS timespan, 
 					'Closed' as action,
 			        COUNT(*) as count_wr
 			FROM wrhwr
@@ -66,6 +66,22 @@
 			decimals="0" />
 	</dataSource>
 
+	<dataSource id="ds_chart_groupingAxis"
+		type="grouping">
+		<sql dialect="generic">
+			SELECT '30 Days' AS timespan
+			UNION
+			SELECT '60 Days' AS timespan
+			UNION
+			SELECT '90 Days' AS timespan
+		</sql>
+		<table name="wrhwr"
+			role="main" />
+		<field name="timespan"
+			dataType="text"
+			groupBy="true"/>
+	</dataSource>
+
 	<panel id="chart_metrics"
 		type="htmlChart"
 		controlType="columnChart"
@@ -77,20 +93,20 @@
 		backgroundColor="0xc6e2ff">
 		<title>Work Request Volume</title>
 
-		<groupingAxis 
+		<groupingAxis dataSource="ds_chart_groupingAxis"
 			table="wrhwr"
 			field="timespan"
 			labelRotation="0">
 			<title translatable="true">Time period</title>
 		</groupingAxis>
 
-		<secondaryGroupingAxis 
+		<secondaryGroupingAxis dataSource="ds_chart_metrics"
 			table="wrhwr"
 			field="action">
 			<title translatable="true">Action</title>
 		</secondaryGroupingAxis>
 
-		<dataAxis 
+		<dataAxis dataSource="ds_chart_metrics"
 			table="wrhwr"
 			field="count_wr"
 			showLabel="true">
