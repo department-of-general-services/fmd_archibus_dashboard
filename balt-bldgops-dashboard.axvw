@@ -21,7 +21,7 @@
 		region="west" />
 	<panel id="metric_chart"
 		type="view"
-		file="balt-bldgops-chart-closed.axvw"
+		file="balt-bldgops-chart-stacked-test.axvw"
 		layout="nested_center"
 		region="north" />
 	<panel id="volume_chart"
