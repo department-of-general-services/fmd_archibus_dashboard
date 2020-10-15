@@ -11,7 +11,8 @@
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
-				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -1, getDate()))
+				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
 			UNION
 			SELECT '30 Days' AS timespan, 
 				   'Closed' AS action,
@@ -19,7 +20,8 @@
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
-				AND date_closed &gt;= DateAdd(day, -30,  DateAdd(year, -1, getDate()))
+				AND date_closed &gt;= DateAdd(day, -30,  DateAdd(year, -2, getDate()))
+				AND date_closed &lt;  DateAdd(year, -2, getDate())
 
 			UNION
 
@@ -29,7 +31,8 @@
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
-				AND date_requested &gt;= DateAdd(day, -60, DateAdd(year, -1, getDate()))
+				AND date_requested &gt;= DateAdd(day, -60, DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
 			UNION
 			SELECT '60 Days' AS timespan, 
 				   'Closed' AS action,
@@ -37,8 +40,8 @@
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
-				AND date_closed &gt;= DateAdd(day, -60,  DateAdd(year, -1, getDate()))
-
+				AND date_closed &gt;= DateAdd(day, -60,  DateAdd(year, -2, getDate()))
+				AND date_closed &lt;  DateAdd(year, -2, getDate())
 			UNION
 			
 			SELECT '90 Days' AS timespan, 
@@ -47,7 +50,8 @@
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
-				AND date_requested &gt;= DateAdd(day, -90, DateAdd(year, -1, getDate()))
+				AND date_requested &gt;= DateAdd(day, -90, DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
 			UNION
 			SELECT '90 Days' AS timespan, 
 					'Closed' as action,
@@ -55,7 +59,8 @@
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
-				AND date_closed &gt;= DateAdd(day, -90, DateAdd(year, -1, getDate()))
+				AND date_closed &gt;= DateAdd(day, -90, DateAdd(year, -2, getDate()))
+				AND date_closed &lt;  DateAdd(year, -2, getDate())
 		) wrhwr
 			WHERE timespan = ${parameters['summaryValueForThisGroup']}
 		</sql>
