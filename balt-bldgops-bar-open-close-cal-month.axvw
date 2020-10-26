@@ -4,76 +4,36 @@
 	<dataSource id="ds_monthly_volume">
 		<sql dialect="sqlserver">
 
-		SELECT COUNT(*) as count_wr,
-        	   "Opened" as action,
-        	   CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
+		SELECT CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
+			   COUNT(*) as count_wr
     	FROM wrhwr
+		WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
+			AND date_requested &lt;  DateAdd(year, -2, getDate())
     	GROUP BY CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120)
-
-		UNION
-
-		SELECT COUNT(*) as count_wr,
-        	  "Closed" as action,
-              CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120) AS calendar_month,
-    	FROM wrhwr
-    	GROUP BY CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120)
-
 		</sql>
+
 		<table name="wrhwr"
 			role="main" />
 		<field name="calendar_month"
 			dataType="text"
 			size="7"/>
-		<field name="action"
-			dataType="text"/>
 		<field name="count_wr"
 			dataType="number"
 			decimals="0" />
 
 	</dataSource>
 
-	<dataSource id="ds_monthly_groupingAxis2"
-		type="grouping">
-		<sql dialect="generic">
-			SELECT CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
-    	FROM wrhwr
-		</sql>
-		<table name="wrhwr"
-			role="main" />
-		<field name="action"
-			dataType="text"
-			groupBy="true"/>
-	</dataSource>
+	<panel id="metrics_grid"
+		type="grid"
+		controlType="reportGrid"
+		dataSource="ds_monthly_volume">
+		<title>Work Request Metrics</title>
 
-	<panel id="chart_volume"
-		type="htmlChart"
-		controlType="columnChart"
-		dataSource="ds_monthly_volume"
-		showLegendOnLoad="true"
-		showLegendAsPopUp="false"
-		legendLocation="bottom"
-		showDataTips="true"
-		backgroundColor="0xc6e2ff">
-		<title>Request Volume by Month</title>
-
-		<groupingAxis dataSource="ds_monthly_groupingAxis2"
-			table="wrhwr"
-			field="calendar_month"
-			showLabel="true">
-			<title>Calendar Month</title>
-		</groupingAxis>
-
-		<secondaryGroupingAxis dataSource="ds_monthly_volume"
-			table="wrhwr"
-			field="action">
-			<title translatable="true">Action</title>
-		</secondaryGroupingAxis>
-
-		<dataAxis dataSource="ds_monthly_volume"
-			table="wrhwr"
-			field="count_wr"
-			showLabel="true">
+		<field name="calendar_month">
+			<title>Metric</title>
+		</field>
+		<field name="count_wr">
 			<title>Count</title>
-		</dataAxis>
+		</field>
 	</panel>
 </view>
