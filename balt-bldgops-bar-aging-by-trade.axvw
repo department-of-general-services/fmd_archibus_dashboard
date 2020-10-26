@@ -1,0 +1,73 @@
+<view version="2.0">
+    <!-- <title>Work Requests Chart</title> -->
+
+    <dataSource id="ds_aging_by_trade">
+        <sql dialect="sqlserver">
+        SELECT
+            trade,
+            count(*) AS count_wr
+        FROM
+            (
+                SELECT
+                    wr_id,
+                    status,
+                    prob_type AS problem_type,
+                    date_requested,
+                    CASE
+                        WHEN prob_type LIKE 'ELEC%'
+                        OR prob_type = 'OUTLETS' THEN 'Electrical'
+                        WHEN prob_type IN ('PAINT', 'PAINTING') THEN 'Painting'
+                        WHEN prob_type LIKE 'PLUMB%' THEN 'Plumbing'
+                        WHEN prob_type IN ('CARPENTRY', 'DOOR', 'LOCK', 'WALL') THEN 'Carpentry'
+                        WHEN prob_type LIKE 'HVAC%'
+                        OR prob_type IN ('CHILLERS', 'COOLING TOWERS') THEN 'HVAC Corrective'
+                        ELSE 'None'
+                    END AS trade
+                FROM
+                    wrhwr
+                WHERE
+                    prob_type != 'HVAC|PM'
+                    AND date_requested &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
+				    AND date_requested &lt;  DateAdd(year, -2, getDate())
+            ) trades
+        WHERE
+            trade != 'None'
+            AND status IN ('AA', 'A', 'I', 'Com')
+        GROUP BY
+            trade
+        </sql>
+        <table name="wrhwr"
+            role="main" />
+        <field name="trade"
+            dataType="text" />
+        <field name="count_wr"
+            dataType="number"
+            decimals="0" />
+    </dataSource>
+
+    <panel id="aging_backlog_by_trade"
+        type="htmlChart"
+        controlType="columnChart"
+        dataSource="ds_aging_by_trade"
+        showLegendOnLoad="false"
+        showLegendAsPopUp="false"
+        legendLocation="bottom"
+        showDataTips="true"
+        backgroundColor="0xc6e2ff">
+        <title>Aging Backlog By Trade</title>
+
+        <groupingAxis dataSource="ds_aging_by_trade"
+            table="wrhwr"
+            field="trade"
+            showLabel="true"
+            labelRotation="45">
+            <title>Trade</title>
+        </groupingAxis>
+
+        <dataAxis dataSource="ds_aging_by_trade"
+            table="wrhwr"
+            field="count_wr">
+            <title>Count</title>
+        </dataAxis>
+    </panel>
+</view>
