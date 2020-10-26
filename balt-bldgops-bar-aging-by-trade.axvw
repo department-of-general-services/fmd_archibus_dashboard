@@ -1,8 +1,8 @@
 <view version="2.0">
-	<!-- <title>Work Requests Chart</title> -->
+    <!-- <title>Work Requests Chart</title> -->
 
-	<dataSource id="ds_aging_by_trade">
-		<sql dialect="sqlserver">
+    <dataSource id="ds_aging_by_trade">
+        <sql dialect="sqlserver">
         SELECT
             trade,
             count(*) AS count_wr
@@ -35,27 +35,39 @@
             AND status IN ('AA', 'A', 'I', 'Com')
         GROUP BY
             trade
-            </sql>
-		<table name="wrhwr"
-			role="main" />
-		<field name="trade"
-			dataType="text" />
-		<field name="count_wr"
-			dataType="number"
-			decimals="0" />
-	</dataSource>
+        </sql>
+        <table name="wrhwr"
+            role="main" />
+        <field name="trade"
+            dataType="text" />
+        <field name="count_wr"
+            dataType="number"
+            decimals="0" />
+    </dataSource>
 
-	<panel id="metrics_grid"
-		type="grid"
-		controlType="reportGrid"
-		dataSource="ds_aging_by_trade">
-		<title>Aging Work Requests By Trade</title>
+    <panel id="aging_backlog_by_trade"
+        type="htmlChart"
+        controlType="columnChart"
+        dataSource="ds_aging_by_trade"
+        showLegendOnLoad="false"
+        showLegendAsPopUp="false"
+        legendLocation="bottom"
+        showDataTips="true"
+        backgroundColor="0xc6e2ff">
+        <title>Aging Backlog By Trade</title>
 
-		<field name="trade">
-			<title>Trade</title>
-		</field>
-		<field name="count_wr">
-			<title>Count</title>
-		</field>
-	</panel>
+        <groupingAxis dataSource="ds_aging_by_trade"
+            table="wrhwr"
+            field="trade"
+            showLabel="true"
+            labelRotation="45">
+            <title>Trade</title>
+        </groupingAxis>
+
+        <dataAxis dataSource="ds_aging_by_trade"
+            table="wrhwr"
+            field="count_wr">
+            <title>Count</title>
+        </dataAxis>
+    </panel>
 </view>
