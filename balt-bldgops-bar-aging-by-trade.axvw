@@ -20,8 +20,8 @@
                         WHEN prob_type IN ('CARPENTRY', 'DOOR', 'LOCK', 'WALL') THEN 'Carpentry'
                         WHEN (prob_type LIKE 'HVAC%'
                         OR prob_type IN ('CHILLERS', 'COOLING TOWERS')) 
-                        AND prob_type != 'HVAC|PM' THEN 'HVAC Corrective'
-                        WHEN prob_type IN ('PREVENTIVE MAINT', 'HVAC|PM') THEN 'HVAC Preventive'
+                        AND prob_type != 'HVAC|PM' THEN 'HVAC CM'
+                        WHEN prob_type IN ('PREVENTIVE MAINT', 'HVAC|PM') THEN 'HVAC PM'
                         ELSE 'None'
                     END AS trade
                 FROM
