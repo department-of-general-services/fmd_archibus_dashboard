@@ -52,6 +52,7 @@
 		<field name="pct_closed"
 			dataType="number"
 			decimals="2" />
+		<sortField name="calendar_month" table="wrhwr"/>
 	</dataSource>
 
 	<panel id="monthly_pct_closed"
