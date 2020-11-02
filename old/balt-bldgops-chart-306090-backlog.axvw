@@ -8,8 +8,8 @@
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
-				AND REPLACE(status, ' ', '') IN ('AA', 'A', 'I')
-				AND date_requested &gt;= DateAdd(day, -30, getDate())
+				AND REPLACE(status, ' ', '') IN ('I')
+				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -1, getDate()))
 
 			UNION
 			SELECT 'Backlog (Requested in Last 60 Days)' AS label, 
@@ -18,7 +18,7 @@
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
 				AND REPLACE(status, ' ', '') IN ('AA', 'A', 'I')
-				AND date_requested &gt;= DateAdd(day, -60, getDate())
+				AND date_requested &gt;= DateAdd(day, -60,  DateAdd(year, -1, getDate()))
 
 			UNION
 			SELECT 'Backlog (Requested in Last 90 Days)' AS label, 
@@ -27,7 +27,7 @@
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
 				AND REPLACE(status, ' ', '') IN ('AA', 'A', 'I')
-				AND date_requested &gt;= DateAdd(day, -90, getDate())
+				AND date_requested &gt;= DateAdd(day, -90,  DateAdd(year, -1, getDate()))
 		</sql>
 		<table name="wrhwr"
 			role="main" />

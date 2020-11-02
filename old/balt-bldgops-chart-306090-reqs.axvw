@@ -9,7 +9,7 @@
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
 				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -1, getDate()))
-
+			
 			UNION
 			SELECT '60 Days' AS label, 
 			        COUNT(*) as count_wr
