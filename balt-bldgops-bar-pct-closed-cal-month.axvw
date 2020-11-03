@@ -78,7 +78,7 @@
 			table="wrhwr"
 			field="pct_closed"
 			showLabel="true">
-			<title>Count</title>
+			<title>Percent</title>
 		</dataAxis>
 	</panel>
 </view>

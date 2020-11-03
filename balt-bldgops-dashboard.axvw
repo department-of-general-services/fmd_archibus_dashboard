@@ -3,15 +3,17 @@
 
 	<layout id="main">
 		<west split="true"
-			initialSize="350" />
+			initialSize="30%" />
 		<center />
 	</layout>
 
 	<layout id="nested_west"
-	containingLayout="main"
+		containingLayout="main"
 		region="west">
 		<north split="true"
-			initialSize="50%" />
+			initialSize="15%" />
+		<south split="true"
+			initialSize="40%" />
 		<center />
 	</layout>
 
@@ -23,27 +25,33 @@
 		<center />
 	</layout>
 
-	<panel id="aging_by_trade"
-		type="view"
-		file="balt-bldgops-bar-aging-by-trade.axvw"
-		layout="nested_west"
-		region="north" />
-
 	<panel id="metrics_list"
 		type="view"
 		file="balt-bldgops-grid-30-open-close.axvw"
+		layout="nested_west"
+		region="north" />
+
+	<panel id="aging_by_trade"
+		type="view"
+		file="balt-bldgops-bar-aging-by-trade-test.axvw"
 		layout="nested_west"
 		region="center" />
 
 	<panel id="metric_chart"
 		type="view"
 		file="balt-bldgops-bar-306090-open-backlog.axvw"
-		layout="nested_center"
-		region="north" />
+		layout="nested_west"
+		region="south" />
 
 	<panel id="volume_chart"
 		type="view"
 		file="balt-bldgops-bar-open-close-cal-month.axvw"
+		layout="nested_center"
+		region="north" />
+
+	<panel id="pct_closed_chart"
+		type="view"
+		file="balt-bldgops-bar-pct-closed-cal-month.axvw"
 		layout="nested_center"
 		region="center" />
 </view>
