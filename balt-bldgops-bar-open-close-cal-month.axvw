@@ -68,13 +68,13 @@
 		legendLocation="bottom"
 		showDataTips="true"
 		backgroundColor="0xc6e2ff">
-		<title>Request Volume by Month</title>
+		<title>Workflow by Calendar Month</title>
 
 		<groupingAxis dataSource="ds_monthly_groupingAxis2"
 			table="wrhwr"
 			field="calendar_month"
 			showLabel="true"
-			labelRotation="45">
+			labelRotation="0">
 			<title>Month</title>
 		</groupingAxis>
 

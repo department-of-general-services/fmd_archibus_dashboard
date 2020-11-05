@@ -1,5 +1,5 @@
 <view version="2.0">
-	<title>Draft Building Operations Dashboard</title>
+	<title>Building Operations Dashboard: Draft</title>
 
 	<layout id="main">
 		<west split="true"
