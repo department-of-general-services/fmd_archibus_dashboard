@@ -70,7 +70,7 @@
 			table="wrhwr"
 			field="calendar_month"
 			showLabel="true"
-			labelRotation="45">
+			labelRotation="0">
 			<title>Month</title>
 		</groupingAxis>
 
