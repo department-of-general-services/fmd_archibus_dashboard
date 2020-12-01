@@ -5,7 +5,7 @@
 		<sql dialect="sqlserver">
 		SELECT
 			calendar_month,
-			SUM(is_on_time) / COUNT(*) as percent_ontime
+			SUM(is_on_time) * 100 / COUNT(*) as percent_ontime
 		FROM
 			(
 				SELECT
@@ -140,9 +140,8 @@
 									wrhwr r
 									LEFT JOIN afm_users u ON r.requestor = u.user_name
 								WHERE
-									date_completed IS NOT NULL
-									AND date_requested &gt;= DateAdd(month, -12, DateAdd(year, -2, getDate()))
-									AND date_requested &lt; DateAdd(year, -2, getDate())
+									date_requested &gt;= DateAdd(month, -12, getDate())
+									AND date_requested &lt; getDate()
 							) AS CMU_problem_types
 					) AS benchmarks
 			) AS is_on_time

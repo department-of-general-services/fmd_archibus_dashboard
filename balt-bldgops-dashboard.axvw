@@ -1,5 +1,5 @@
 <view version="2.0">
-	<title>Building Operations Dashboard: Draft</title>
+	<title>Facilities Dashboard</title>
 
 	<layout id="main">
 		<west split="true"
@@ -21,31 +21,31 @@
 		containingLayout="main"
 		region="center">
 		<north split="true"
-			initialSize="50%" />
+			initialSize="40%" />
 		<center />
 	</layout>
 
 	<panel id="metrics_list"
 		type="view"
-		file="balt-bldgops-grid-30-open-close.axvw"
+		file="balt-bldgops-grid-workflow-last-30.axvw"
 		layout="nested_west"
 		region="north" />
 
 	<panel id="aging_by_trade"
 		type="view"
-		file="balt-bldgops-bar-aging-by-trade-test.axvw"
+		file="balt-bldgops-bar-aging-backlog-by-trade.axvw"
 		layout="nested_west"
 		region="center" />
 
 	<panel id="metric_chart"
 		type="view"
-		file="balt-bldgops-bar-306090-open-backlog.axvw"
+		file="balt-bldgops-bar-work-request-volume-backlog.axvw"
 		layout="nested_west"
 		region="south" />
 
 	<panel id="volume_chart"
 		type="view"
-		file="balt-bldgops-bar-open-close-cal-month.axvw"
+		file="balt-bldgops-bar-workflow-by-cal-month.axvw"
 		layout="nested_center"
 		region="north" />
 

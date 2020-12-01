@@ -1,7 +1,7 @@
 <view version="2.0">
     <!-- <title>Work Requests Chart</title> -->
 
-    <js file="balt-bldgops-bar-aging-by-trade-test-2.js" />
+    <js file="balt-bldgops-bar-aging-backlog-by-trade.js" />
 
     <dataSource id="ds_aging_by_trade">
         <sql dialect="sqlserver">
@@ -29,8 +29,8 @@
                 FROM
                     wrhwr
                 WHERE
-                    date_requested &gt;= DateAdd(year, -1, DateAdd(year, -2, getDate()))
-				    AND date_requested &lt;  DateAdd(month, -1, DateAdd(year, -2, getDate()))
+                    date_requested &gt;= DateAdd(year, -1, getDate())
+				    AND date_requested &lt;  DateAdd(month, -1, getDate())
             ) trades
         WHERE
             trade != 'None'
