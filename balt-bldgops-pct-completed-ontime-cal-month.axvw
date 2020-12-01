@@ -156,7 +156,7 @@
 			size="7"/>
 		<field name="percent_ontime"
 			dataType="number"
-			decimals="2" />
+			decimals="1" />
 		<sortField name="calendar_month" table="wrhwr"/>
 	</dataSource>
 

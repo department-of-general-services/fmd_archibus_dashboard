@@ -76,7 +76,7 @@
 			dataType="text" />
 		<field name="count_wr"
 			dataType="number"
-			decimals="3" />
+			decimals="0" />
 		<parameter name="summaryValueForThisGroup"
 			dataType="text"
 			value=""/>
