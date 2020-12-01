@@ -1,6 +1,8 @@
 <view version="2.0">
     <!-- <title>Work Requests Chart</title> -->
 
+    <js file="balt-bldgops-bar-aging-by-trade-test-2.js" />
+
     <dataSource id="ds_aging_by_trade">
         <sql dialect="sqlserver">
         SELECT
@@ -27,7 +29,6 @@
                 FROM
                     wrhwr
                 WHERE
-
                     date_requested &gt;= DateAdd(year, -1, DateAdd(year, -2, getDate()))
 				    AND date_requested &lt;  DateAdd(month, -1, DateAdd(year, -2, getDate()))
             ) trades
@@ -57,11 +58,16 @@
         backgroundColor="0xc6e2ff">
         <title>Aging Backlog By Trade</title>
 
+        <event type="onClickItem">
+            <command type="callFunction"
+                functionName="onDrillDown"/>
+        </event>
+
         <groupingAxis dataSource="ds_aging_by_trade"
             table="wrhwr"
             field="trade"
             showLabel="true"
-            labelRotation="45">
+            labelRotation="0">
             <title>Trade</title>
         </groupingAxis>
 
@@ -69,5 +75,18 @@
             table="wrhwr"
             field="count_wr">
         </dataAxis>
+    </panel>
+
+    <!-- a detail report -->
+    <panel type="grid"
+        id="chartDrillDown_aging_by_trade"
+        dataSource="ds_aging_by_trade"
+        hidden="true"
+        showOnLoad="false">
+        <title translatable="true">Details: Aging WRs by Trade</title>
+        <field table="wrhwr"
+            name="trade" />
+        <field table="wrhwr"
+            name="count_wr" />
     </panel>
 </view>
