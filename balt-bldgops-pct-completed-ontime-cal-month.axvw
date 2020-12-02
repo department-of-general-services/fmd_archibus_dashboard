@@ -167,6 +167,8 @@
 		showLegendOnLoad="false"
 		showLegendAsPopUp="false"
 		legendLocation="bottom"
+		unitPrecision="0"
+        showUnitPrefixes="true"
 		showDataTips="true"
 		backgroundColor="0xc6e2ff">
 		<title>Percentage of Work Orders Completed On Time</title>

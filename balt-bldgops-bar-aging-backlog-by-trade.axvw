@@ -55,6 +55,8 @@
         showLegendAsPopUp="false"
         legendLocation="bottom"
         showDataTips="true"
+        unitPrecision="0"
+        showUnitPrefixes="true"
         backgroundColor="0xc6e2ff">
         <title>Aging Backlog By Trade</title>
 
