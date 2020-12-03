@@ -13,7 +13,7 @@
 		<north split="true"
 			initialSize="15%" />
 		<south split="true"
-			initialSize="40%" />
+			initialSize="42%" />
 		<center />
 	</layout>
 
@@ -21,7 +21,7 @@
 		containingLayout="main"
 		region="center">
 		<north split="true"
-			initialSize="40%" />
+			initialSize="42%" />
 		<center />
 	</layout>
 

@@ -26,6 +26,7 @@ def set_up_dir(zip_dir, view_dir):
 
 
 def loop_through_axvw(prod_dir, to_replace, replace_with):
+    # TODO: next time please be sure to catch .js files too!
     for file_path in Path.cwd().glob("*.axvw"):
         print(file_path.name)
         with open(file_path, "r") as f:
