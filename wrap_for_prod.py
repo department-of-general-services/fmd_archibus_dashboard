@@ -1,6 +1,6 @@
 from pathlib import Path
 import re
-from datetime import datetime 
+from datetime import datetime
 from shutil import make_archive
 
 
@@ -25,9 +25,16 @@ def set_up_dir(zip_dir, view_dir):
     return
 
 
+def get_files(extensions):
+    all_files = []
+    for ext in extensions:
+        all_files.extend(Path.cwd().glob(ext))
+    return(all_files)
+
+
 def loop_through_axvw(prod_dir, to_replace, replace_with):
-    # TODO: next time please be sure to catch .js files too!
-    for file_path in Path.cwd().glob("*.axvw"):
+    file_paths = get_files(['*.axvw', '*.js'])
+    for file_path in file_paths:
         print(file_path.name)
         with open(file_path, "r") as f:
             axvw_text = f.read()
@@ -45,7 +52,7 @@ def zip_up_dash(zip_dir, view_dir):
     return
 
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     zip_dir = Path(r"C:\\Users\\sa.james\Documents\\fmd_dashboard")
     view_dir = zip_dir / "views"
     set_up_dir(zip_dir, view_dir)
@@ -54,5 +61,5 @@ if __name__ == "__main__" :
     replace_with = r"getDate()"
     loop_through_axvw(view_dir, to_replace, replace_with)
     zip_up_dash(zip_dir, view_dir)
-    
+
     print("Work completed.")
