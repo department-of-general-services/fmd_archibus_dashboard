@@ -45,7 +45,7 @@
 										120
 									) AS calendar_month,
 									DATEDIFF(day, date_requested, date_completed) AS days_to_completion,
-									DATEDIFF(day, date_requested, getDate()) AS days_open,
+									DATEDIFF(day, date_requested, DateAdd(year, -2, getDate())) AS days_open,
 									primary_type,
 									date_completed,
 									CASE

@@ -7,16 +7,16 @@
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
-				AND date_requested &gt;= DateAdd(day, -30, getDate())
-				AND date_requested &lt; getDate()
+				AND date_requested &gt;= DateAdd(day, -30, DateAdd(year, -2, getDate()))
+				AND date_requested &lt; DateAdd(year, -2, getDate())
 			UNION
 			SELECT 'Closed in Last 30 Days' AS label, COUNT(*) as count_wr
 			FROM wrhwr
 			WHERE prob_type IS NOT NULL
 				AND prob_type != 'TEST(DO NOT USE)'
 				AND status = 'Clo'
-				AND date_closed &gt;= DateAdd(day, -30, getDate())
-				AND date_closed &lt; getDate()
+				AND date_closed &gt;= DateAdd(day, -30, DateAdd(year, -2, getDate()))
+				AND date_closed &lt; DateAdd(year, -2, getDate())
 		</sql>
 		<table name="wrhwr"
 			role="main" />
