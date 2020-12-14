@@ -18,7 +18,7 @@
 					primary_type,
 					unfinished_but_late,
 					CASE
-						WHEN days_to_completion <= benchmark THEN CAST(1 AS DECIMAL)
+						WHEN days_to_completion &lt;= benchmark THEN CAST(1 AS DECIMAL)
 						WHEN unfinished_but_late = 1 THEN CAST(0 AS DECIMAL)
 						ELSE CAST(0 AS DECIMAL)
 					END AS is_on_time
@@ -29,7 +29,7 @@
 							CASE
 								WHEN (
 									date_completed IS NULL
-									AND days_open > benchmark
+									AND days_open &lt; benchmark
 								) then CAST(1 AS DECIMAL)
 								ELSE CAST(0 AS DECIMAL)
 							END AS unfinished_but_late
@@ -160,25 +160,25 @@
 											date_closed,
 											u.role_name,
 											CASE
-												WHEN datepart(mm, date_requested) >= 7 THEN datepart(yy, date_requested) + 1
+												WHEN datepart(mm, date_requested) &gt;= 7 THEN datepart(yy, date_requested) + 1
 												ELSE datepart(yy, date_requested)
 											END AS 'fy_request',
 											CASE
-												WHEN datepart(mm, date_closed) >= 7 THEN datepart(yy, date_closed) + 1
+												WHEN datepart(mm, date_closed) &gt;= 7 THEN datepart(yy, date_closed) + 1
 												ELSE datepart(yy, date_closed)
 											END AS 'fy_close'
 										FROM
-											DGS_Archibus.afm.wrhwr r
-											LEFT JOIN DGS_Archibus.afm.afm_users u ON r.requestor = u.user_name
+											wrhwr r
+											LEFT JOIN afm_users u ON r.requestor = u.user_name
 										WHERE
 											prob_type IS NOT NULL
 											AND date_closed IS NOT NULL
 											AND prob_type != 'TEST (DO NOT USE)'
-											AND date_requested >= DateAdd(month, -13, getDate())
-											AND date_requested < dateAdd(
+											AND date_requested &gt;= DateAdd(month, -13, DateAdd(year, -2, getDate()))
+											AND date_requested &lt; dateAdd(
 												MS,
 												-3,
-												DateAdd(MM, DateDiff(MM, 0, getDate()), 0)
+												DateAdd(MM, DateDiff(MM, 0, DateAdd(year, -2, getDate())), 0)
 											)
 									) AS CMU_problem_types
 								WHERE
