@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     to_replace = re.escape(r"DateAdd(year, -2, getDate())")
     replace_with = r"getDate()"
-    loop_through_axvw(view_dir, to_replace, replace_with)
+    loop_through_axvw_and_js(view_dir, to_replace, replace_with)
     zip_up_dash(zip_dir, view_dir)
 
     print("Work completed.")

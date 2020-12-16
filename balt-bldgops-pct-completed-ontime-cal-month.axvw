@@ -217,7 +217,7 @@
         showUnitPrefixes="true"
 		showDataTips="true"
 		backgroundColor="0xc6e2ff">
-		<title>Percentage of Work Orders Completed On Time</title>
+		<title>Percentage of PMs Completed On Time</title>
 
 		<groupingAxis dataSource="ds_monthly_pct_ontime"
 			table="wrhwr"
