@@ -1,9 +1,9 @@
 <view version="2.0">
     <!-- <title>Work Requests Chart</title> -->
 
-    <js file="balt-bldgops-bar-aging-by-trade-exp.js" />
+    <js file="balt-bldgops-bar-aging-backlog-by-trade.js" />
 
-    <dataSource id="ds-aging-by-trade-exp">
+    <dataSource id="ds_aging_by_trade">
         <sql dialect="sqlserver">
         SELECT
             trade,
@@ -50,11 +50,13 @@
     <panel id="aging_backlog_by_trade"
         type="htmlChart"
         controlType="columnChart"
-        dataSource="ds-aging-by-trade-exp"
+        dataSource="ds_aging_by_trade"
         showLegendOnLoad="false"
         showLegendAsPopUp="false"
         legendLocation="bottom"
         showDataTips="true"
+        unitPrecision="0"
+        showUnitPrefixes="true"
         backgroundColor="0xc6e2ff">
         <title>Aging Backlog By Trade</title>
 
@@ -63,72 +65,30 @@
                 functionName="onDrillDown"/>
         </event>
 
-        <groupingAxis dataSource="ds-aging-by-trade-exp"
+        <groupingAxis dataSource="ds_aging_by_trade"
             table="wrhwr"
             field="trade"
             showLabel="true"
-            labelRotation="45">
+            labelRotation="0">
             <title>Trade</title>
         </groupingAxis>
 
-        <dataAxis dataSource="ds-aging-by-trade-exp"
+        <dataAxis dataSource="ds_aging_by_trade"
             table="wrhwr"
             field="count_wr">
         </dataAxis>
     </panel>
 
-    <!-- Second datasource-->
-    <dataSource id="ds-aging-by-trade-exp-drilldown"
-        type="grouping">
-        <table name="wrhwr"
-            role="main"/>
-
-        <field name="trade"
-            groupBy="true"
-            dataType="text">
-            <sql dialect="generic">
-            	CASE
-                        WHEN prob_type LIKE 'ELEC%'
-                        OR prob_type = 'OUTLETS' THEN 'Electrical'
-                        WHEN prob_type IN ('PAINT', 'PAINTING') THEN 'Painting'
-                        WHEN prob_type LIKE 'PLUMB%' THEN 'Plumbing'
-                        WHEN prob_type IN ('CARPENTRY', 'DOOR', 'LOCK', 'WALL') THEN 'Carpentry'
-                        WHEN (prob_type LIKE 'HVAC%'
-                        OR prob_type IN ('CHILLERS', 'COOLING TOWERS')) 
-                        AND prob_type != 'HVAC|PM' THEN 'HVAC CM'
-                        WHEN prob_type IN ('PREVENTIVE MAINT', 'HVAC|PM') THEN 'HVAC PM'
-                        ELSE 'None'
-                    END
-            </sql>
-        </field>
-
-        <field name="count_wr" >
-            <sql dialect="generic">
-                COUNT(wr_id)
-            </sql>
-        </field>
-    </dataSource>
-
-    <parameter name="summaryValueForThisGroup"
-        dataType="text"
-        value=""/>
-    <parameter name="trade"
-        dataType="text"
-        value=""/>
-    <restriction type="sql"
-        sql="trade = ${parameters['trade']}"/>
-</dataSource>
-
-<!-- a detail report -->
-<panel type="grid"
-    id="chartDrillDown_aging_by_trade"
-    dataSource="ds-aging-by-trade-exp-drilldown"
-    hidden="true"
-    showOnLoad="false">
-    <title translatable="true">Details: Aging WRs by Trade</title>
-    <field table="wrhwr"
-        name="trade" />
-    <field table="wrhwr"
-        name="count_wr" />
-</panel>
+    <!-- a detail report -->
+    <panel type="grid"
+        id="chartDrillDown_aging_by_trade"
+        dataSource="ds_aging_by_trade"
+        hidden="true"
+        showOnLoad="false">
+        <title translatable="true">Details: Aging WRs by Trade</title>
+        <field table="wrhwr"
+            name="trade" />
+        <field table="wrhwr"
+            name="count_wr" />
+    </panel>
 </view>

@@ -66,6 +66,8 @@
 		showLegendOnLoad="true"
 		showLegendAsPopUp="false"
 		legendLocation="bottom"
+		unitPrecision="0"
+        showUnitPrefixes="true"
 		showDataTips="true"
 		backgroundColor="0xc6e2ff">
 		<title>Workflow by Calendar Month</title>
