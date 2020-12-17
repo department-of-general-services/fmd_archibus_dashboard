@@ -1,0 +1,38 @@
+<!--  drill-down to chart and click chart item will drill-down to a detail report -->
+<view version="2.0">   
+   	<layout file="2panels-stacked.axvw"/>   
+    <title translatable="true">HTML5 Chart to Show Drill Down Feature</title>
+    
+    <dataSource id="chartDrillDown_ds">
+        <table name="property" />
+        <field table="property" name="pr_id" />
+        <field table="property" name="value_book" />
+        <field table="property" name="cost_purchase" />
+    </dataSource> 
+  
+    <js file="ab-ex-htmlchart-drill-down.js" />
+     
+	<!-- chart -->
+    <panel id="chartDrillDown_chart" type="htmlChart" controlType="columnChart"  dataSource="chartDrillDown_ds" showLabels="false" region="north">
+        <event type="onClickItem">
+            <command type="callFunction" functionName="onDrillDown"/>                 
+        </event>
+        <groupingAxis table="property" field="pr_id" labelRotation="45">
+            <title translatable="true">Property</title>
+        </groupingAxis>
+        <dataAxis table="property" field="value_book">
+            <title translatable="true">Book Value</title>
+        </dataAxis>
+        <dataAxis table="property" field="cost_purchase">
+            <title translatable="true">Purchase Cost</title>
+        </dataAxis>
+    </panel>
+    
+	<!-- a detail report -->
+   	<panel type="grid" id="chartDrillDown_property_report" dataSource="chartDrillDown_ds" region="center" showOnLoad="false" >
+         <title translatable="true">Selected Property Details</title>
+        <field table="property" name="pr_id" />
+        <field table="property" name="value_book" />
+        <field table="property" name="cost_purchase" />
+    </panel>	
+</view>
