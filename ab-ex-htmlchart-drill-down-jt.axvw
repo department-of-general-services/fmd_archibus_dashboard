@@ -1,15 +1,29 @@
 <!--  drill-down to chart and click chart item will drill-down to a detail report -->
 <view version="2.0">
     <layout file="2panels-stacked.axvw"/>
-    <js file="ab-ex-htmlchart-drill-down.js" />
+    <js file="ab-ex-htmlchart-drill-down-jt.js" />
     <title translatable="true">HTML5 Chart to Show Drill Down Feature</title>
 
-    <dataSource id="chartDrillDown_jt_ds_GroupingAxis" type="grouping">
+    <!-- Disaggregated data to show in drilldown -->
+    <dataSource id="chartDrillDown_jt_ds_disaggregated">
+        <sql dialect="sqlserver">
+        SELECT bl_id, 
+            site_id, 
+            area_gp as total_area_gp
+        FROM bl 
+        WHERE site_id = ${parameters['summaryValueForThisGroup']}
+        </sql>
         <table name="bl" />
-        <field table="bl" name="bl_id" />
-        <field table="bl" name="site_id" groupBy="true"/>
+        <field table="bl"
+            name="bl_id" />
+        <field table="bl"
+            name="site_id"/>
+        <parameter name="summaryValueForThisGroup"
+            dataType="text"
+            value=""/>
     </dataSource>
 
+    <!-- Aggregated data to show in chart -->
     <dataSource id="chartDrillDown_jt_ds_DataAxis">
         <sql dialect="sqlserver">
         SELECT site_id, 
@@ -38,9 +52,10 @@
         showLabels="false"
         region="north">
 
-        <!--event type="onClickItem">
-            <command type="callFunction" functionName="onDrillDown"/>
-        </event-->
+        <event type="onClickItem">
+            <command type="callFunction"
+                functionName="onDrillDown"/>
+        </event>
 
         <groupingAxis dataSource="chartDrillDown_jt_ds_DataAxis"
             table="bl"
@@ -58,11 +73,17 @@
 
     <!-- a detail report -->
 
-    <!--panel type="grid" id="chartDrillDown_building_report" dataSource="chartDrillDown_jt_ds_DataAxis" region="center" showOnLoad="false">
+    <panel type="grid"
+        id="chartDrillDown_building_report"
+        dataSource="chartDrillDown_jt_ds_disaggregated"
+        region="center"
+        showOnLoad="false">
         <title translatable="true">Selected Property Details</title>
-        <field table="bl" name="bl_id" />
-        <field table="bl" name="total_area_gp" />
+        <field table="bl"
+            name="bl_id" />
+        <field table="bl"
+            name="total_area_gp" />
 
-    </panel-->
+    </panel>
 
 </view>
