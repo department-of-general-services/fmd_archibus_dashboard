@@ -9,15 +9,27 @@
         <sql dialect="sqlserver">
         SELECT bl_id, 
             site_id, 
+            name, 
             area_gp as total_area_gp
         FROM bl 
         WHERE site_id = ${parameters['summaryValueForThisGroup']}
         </sql>
         <table name="bl" />
         <field table="bl"
-            name="bl_id" />
+            name="bl_id"
+            dataType="text"/>
         <field table="bl"
-            name="site_id"/>
+            name="site_id"
+            dataType="text"/>
+        <field table="bl"
+            name="name"
+            dataType="text"/>
+        <field table="bl"
+            name="total_area_gp"
+            dataType="number"/>
+        <!--field table="bl"
+            name="num_fl"
+            dataType="number"/-->
         <parameter name="summaryValueForThisGroup"
             dataType="text"
             value=""/>
@@ -81,6 +93,8 @@
         <title translatable="true">Selected Property Details</title>
         <field table="bl"
             name="bl_id" />
+        <field table="bl"
+            name="name" />
         <field table="bl"
             name="total_area_gp" />
 

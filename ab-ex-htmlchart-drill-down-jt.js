@@ -25,12 +25,15 @@ function onDrillDown(item) {
     //var restriction = new Ab.view.Restriction();
     //restriction.addClause('bl.site_id', item.selectedChartData['bl.site_id']);
 	    
-	//var panel = View.panels.get("chartDrillDown_building_report");
+	var panel = View.panels.get("chartDrillDown_building_report");
 	console.log("Hello, world.")
-	//panel.addParameter('summaryValueForThisGroup', item.selectedChartData['bl.site_id']);
+	panel.addParameter('summaryValueForThisGroup', item.selectedChartData['bl.site_id']);
 	
-	//panel.refresh();
+	panel.refresh();
 	    
-	//panel.show(true);
+	panel.showInWindow({
+        width: 500, 
+        height: 300
+    });
 
 	}
