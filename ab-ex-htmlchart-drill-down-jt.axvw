@@ -10,6 +10,7 @@
         SELECT bl_id, 
             site_id, 
             name, 
+            CONVERT(CHAR(8), date_requested, 112) as date_requested,
             area_gp as total_area_gp
         FROM bl 
         WHERE site_id = ${parameters['summaryValueForThisGroup']}

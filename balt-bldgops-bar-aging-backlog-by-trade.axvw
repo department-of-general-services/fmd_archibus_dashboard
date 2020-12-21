@@ -3,6 +3,70 @@
 
     <js file="balt-bldgops-bar-aging-backlog-by-trade.js" />
 
+    
+
+    <!-- Disaggregated data to show in drilldown. -->
+    <dataSource id="ds_aging_by_trade_disaggregated">
+        <sql dialect="sqlserver">
+        SELECT *
+        FROM
+            (
+                SELECT
+                    w.wr_id,
+                    w.status,
+                    b.name AS building_name,
+                    w.date_requested,
+                    w.prob_type AS problem_type,
+                    CASE
+                        WHEN prob_type LIKE 'ELEC%'
+                        OR prob_type = 'OUTLETS' THEN 'Electrical'
+                        WHEN prob_type IN ('PAINT', 'PAINTING') THEN 'Painting'
+                        WHEN prob_type LIKE 'PLUMB%' THEN 'Plumbing'
+                        WHEN prob_type IN ('CARPENTRY', 'DOOR', 'LOCK', 'WALL') THEN 'Carpentry'
+                        WHEN (prob_type LIKE 'HVAC%'
+                        OR prob_type IN ('CHILLERS', 'COOLING TOWERS')) 
+                        AND prob_type != 'HVAC|PM' THEN 'HVAC CM'
+                        WHEN prob_type IN ('PREVENTIVE MAINT', 'HVAC|PM') THEN 'HVAC PM'
+                        ELSE 'None'
+                    END AS trade
+                FROM
+                    wrhwr  w
+                    left join bl b on w.bl_id = b.bl_id 
+                WHERE
+                    date_requested &gt;= DateAdd(year, -1, DateAdd(year, -2, getDate()))
+				    AND date_requested &lt;  DateAdd(month, -1, DateAdd(year, -2, getDate()))
+            ) trades
+        WHERE
+            trade != 'None'
+            AND trade = ${parameters['summaryValueForThisGroup']}
+            AND status IN ('AA', 'A', 'I', 'Com') 
+        </sql>
+        <table name="wrhwr"
+            role="main"/>
+        <field table="wrhwr"
+            name="wr_id"
+            dataType="text"/>
+        <field table="wrhwr"
+            name="building_name"
+            dataType="text"/>
+        <field table="wrhwr"
+            name="trade"
+            dataType="text"/>
+        <field table="wrhwr"
+            name="date_requested"
+            dataType="date"/>
+        <field table="wrhwr"
+            name="problem_type"
+            dataType="text"/>
+        <field table="wrhwr"
+            name="status"
+            dataType="text"/>
+        <parameter name="summaryValueForThisGroup"
+            dataType="text"
+            value=""/>
+    </dataSource>
+
+    <!-- Aggregated data for chart.-->
     <dataSource id="ds_aging_by_trade">
         <sql dialect="sqlserver">
         SELECT
@@ -82,13 +146,30 @@
     <!-- a detail report -->
     <panel type="grid"
         id="chartDrillDown_aging_by_trade"
-        dataSource="ds_aging_by_trade"
+        dataSource="ds_aging_by_trade_disaggregated"
         hidden="true"
+        showLabels="true"
         showOnLoad="false">
         <title translatable="true">Details: Aging WRs by Trade</title>
         <field table="wrhwr"
-            name="trade" />
+            name="wr_id">
+            <title >Work Request ID</title>
+        </field>
         <field table="wrhwr"
-            name="count_wr" />
+            name="date_requested">
+            <title >Date Requested</title>
+        </field>
+        <field table="wrhwr"
+            name="problem_type">
+            <title >Problem Type</title>
+        </field>
+        <field table="wrhwr"
+            name="building_name">
+            <title >Building name</title>
+        </field>
+        <field table="wrhwr"
+            name="status">
+            <title >Status</title>
+        </field>
     </panel>
 </view>

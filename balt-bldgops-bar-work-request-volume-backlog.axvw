@@ -1,6 +1,104 @@
 <view version="2.0">
 	<!-- <title>Work Requests Chart</title> -->
 
+	<js file="balt-bldgops-bar-work-request-volume-backlog.js" />
+
+	<!-- Disaggregated data to show in drilldown -->
+	<dataSource id="ds_chart_metrics_disaggregated">
+		<sql dialect="sqlserver">
+			SELECT timespan, action, wr_id, status, problem_type
+		FROM (
+			SELECT '30 Days' AS timespan, 
+					'Opened' AS action,
+			        wr_id, 
+					status, 
+					prob_type AS problem_type
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
+			UNION
+			SELECT '30 Days' AS timespan, 
+				   'Backlog' AS action,
+			        wr_id, 
+					status, 
+					prob_type AS problem_type
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND status IN ('AA', 'A', 'I', 'Com')
+				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
+
+			UNION
+
+			SELECT '60 Days' AS timespan, 
+					'Opened' AS action,
+			        wr_id, 
+					status, 
+					prob_type AS problem_type
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_requested &gt;= DateAdd(day, -60, DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
+			UNION
+			SELECT '60 Days' AS timespan, 
+				   'Backlog' AS action,
+			        wr_id, 
+					status, 
+					prob_type AS problem_type
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND status IN ('AA', 'A', 'I', 'Com')
+				AND date_requested &gt;= DateAdd(day, -60,  DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
+
+			UNION
+			
+			SELECT '90 Days' AS timespan, 
+					'Opened' as action,
+			        wr_id, 
+					status, 
+					prob_type AS problem_type
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND date_requested &gt;= DateAdd(day, -90, DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
+			UNION
+			SELECT '90 Days' AS timespan, 
+					'Backlog' as action,
+			        wr_id, 
+					status, 
+					prob_type AS problem_type
+			FROM wrhwr
+			WHERE prob_type IS NOT NULL
+				AND prob_type != 'TEST(DO NOT USE)'
+				AND status IN ('AA', 'A', 'I', 'Com')
+				AND date_requested &gt;= DateAdd(day, -90,  DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
+		) wrhwr
+			WHERE timespan = ${parameters['summaryValueForThisGroup']}
+		</sql>
+		<table name="wrhwr"
+			role="main" />
+		<field name="timespan"
+			dataType="text" />
+		<field name="action"
+			dataType="text" />
+		<field name="wr_id"
+			dataType="text" />
+		<field name="status"
+			dataType="text" />
+		<parameter name="summaryValueForThisGroup"
+			dataType="text"
+			value=""/>
+	</dataSource>
+
+	<!-- Aggregated data for chart. -->
 	<dataSource id="ds_chart_metrics">
 		<sql dialect="sqlserver">
 		SELECT timespan, action, count_wr
@@ -106,10 +204,15 @@
 		showLegendAsPopUp="false"
 		legendLocation="top"
 		unitPrecision="0"
-        showUnitPrefixes="true"
+		showUnitPrefixes="true"
 		showDataTips="true"
 		backgroundColor="0xc6e2ff">
 		<title>Work Request Volume and Backlog</title>
+
+		<event type="onClickItem">
+			<command type="callFunction"
+				functionName="onDrillDown"/>
+		</event>
 
 		<groupingAxis dataSource="ds_chart_groupingAxis"
 			table="wrhwr"
@@ -130,5 +233,30 @@
 			showLabel="true">
 			<title translatable="true">Count</title>
 		</dataAxis>
+	</panel>
+
+	<!-- a detail report -->
+	<panel type="grid"
+		id="chartDrillDown_metrics"
+		dataSource="ds_chart_metrics_disaggregated"
+		hidden="true"
+		showLabels="true"
+		showOnLoad="false">
+		<title >Details: Volume and Backlog</title>
+		<field table="wrhwr"
+			name="wr_id">
+			<title >Work Request ID</title>
+		</field>
+		<!--field table="wrhwr" name="date_requested">
+            <title >Date Requested</title>
+        </field -->
+		<field table="wrhwr"
+			name="problem_type">
+			<title >Problem Type</title>
+		</field>
+		<field table="wrhwr"
+			name="status">
+			<title >Building name</title>
+		</field>
 	</panel>
 </view>
