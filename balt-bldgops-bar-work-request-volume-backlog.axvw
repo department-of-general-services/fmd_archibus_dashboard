@@ -1,7 +1,7 @@
 <view version="2.0">
 	<!-- <title>Work Requests Chart</title> -->
 
-	<js file="balt-bldgops-bar-work-request-volume-backlog.js" />
+	<js file="balt-bldgops-dash-drilldown.js" />
 
 	<!-- Disaggregated data to show in drilldown -->
 	<dataSource id="ds_chart_metrics_disaggregated">
@@ -81,7 +81,8 @@
 				AND date_requested &gt;= DateAdd(day, -90,  DateAdd(year, -2, getDate()))
 				AND date_requested &lt;  DateAdd(year, -2, getDate())
 		) wrhwr
-			WHERE timespan = ${parameters['summaryValueForThisGroup']}
+			WHERE timespan = ${parameters['summaryTimespan']}
+			AND action = ${parameters['summaryAction']}
 		</sql>
 		<table name="wrhwr"
 			role="main" />
@@ -93,7 +94,10 @@
 			dataType="text" />
 		<field name="status"
 			dataType="text" />
-		<parameter name="summaryValueForThisGroup"
+		<parameter name="summaryTimespan"
+			dataType="text"
+			value=""/>
+		<parameter name="summaryAction"
 			dataType="text"
 			value=""/>
 	</dataSource>
@@ -211,7 +215,7 @@
 
 		<event type="onClickItem">
 			<command type="callFunction"
-				functionName="onDrillDown"/>
+				functionName="onDrillDownByTimespan"/>
 		</event>
 
 		<groupingAxis dataSource="ds_chart_groupingAxis"
@@ -247,6 +251,10 @@
 			name="wr_id">
 			<title >Work Request ID</title>
 		</field>
+		<field table="wrhwr"
+			name="timespan">
+			<title >Timespan</title>
+		</field>
 		<!--field table="wrhwr" name="date_requested">
             <title >Date Requested</title>
         </field -->
@@ -256,7 +264,7 @@
 		</field>
 		<field table="wrhwr"
 			name="status">
-			<title >Building name</title>
+			<title >Status</title>
 		</field>
 	</panel>
 </view>
