@@ -120,7 +120,7 @@
         unitPrecision="0"
         showUnitPrefixes="true"
         backgroundColor="0xc6e2ff">
-        <title>Aging Backlog By Trade</title>
+        <title>Aging Backlog By Trade (Open 30+ Days)</title>
 
         <event type="onClickItem">
             <command type="callFunction"
