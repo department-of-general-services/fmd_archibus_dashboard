@@ -6,11 +6,17 @@
 	<!-- Disaggregated data to show in drilldown -->
 	<dataSource id="ds_chart_metrics_disaggregated">
 		<sql dialect="sqlserver">
-			SELECT timespan, action, wr_id, status, problem_type
+			SELECT timespan, 
+				   action, 
+				   wr_id, 
+				   date_requested, 
+				   status, 
+				   problem_type
 		FROM (
 			SELECT '30 Days' AS timespan, 
 					'Opened' AS action,
 			        wr_id, 
+					date_requested,
 					status, 
 					prob_type AS problem_type
 			FROM wrhwr
@@ -22,6 +28,7 @@
 			SELECT '30 Days' AS timespan, 
 				   'Backlog' AS action,
 			        wr_id, 
+					date_requested,
 					status, 
 					prob_type AS problem_type
 			FROM wrhwr
@@ -36,6 +43,7 @@
 			SELECT '60 Days' AS timespan, 
 					'Opened' AS action,
 			        wr_id, 
+					date_requested,
 					status, 
 					prob_type AS problem_type
 			FROM wrhwr
@@ -47,6 +55,7 @@
 			SELECT '60 Days' AS timespan, 
 				   'Backlog' AS action,
 			        wr_id, 
+					date_requested,
 					status, 
 					prob_type AS problem_type
 			FROM wrhwr
@@ -61,6 +70,7 @@
 			SELECT '90 Days' AS timespan, 
 					'Opened' as action,
 			        wr_id, 
+					date_requested,
 					status, 
 					prob_type AS problem_type
 			FROM wrhwr
@@ -72,6 +82,7 @@
 			SELECT '90 Days' AS timespan, 
 					'Backlog' as action,
 			        wr_id, 
+					date_requested,
 					status, 
 					prob_type AS problem_type
 			FROM wrhwr
@@ -93,6 +104,10 @@
 		<field name="wr_id"
 			dataType="text" />
 		<field name="status"
+			dataType="text" />
+		<field name="date_requested"
+			dataType="date" />
+		<field name="problem_type"
 			dataType="text" />
 		<parameter name="summaryTimespan"
 			dataType="text"
@@ -243,8 +258,9 @@
 	<panel type="grid"
 		id="chartDrillDown_metrics"
 		dataSource="ds_chart_metrics_disaggregated"
+		recordLimit="250"		
 		hidden="true"
-		showLabels="true"
+		showLabels="false"
 		showOnLoad="false">
 		<title >Details: Volume and Backlog</title>
 		<field table="wrhwr"
@@ -252,12 +268,9 @@
 			<title >Work Request ID</title>
 		</field>
 		<field table="wrhwr"
-			name="timespan">
-			<title >Timespan</title>
+			name="date_requested">
+			<title >Date Requested</title>
 		</field>
-		<!--field table="wrhwr" name="date_requested">
-            <title >Date Requested</title>
-        </field -->
 		<field table="wrhwr"
 			name="problem_type">
 			<title >Problem Type</title>
