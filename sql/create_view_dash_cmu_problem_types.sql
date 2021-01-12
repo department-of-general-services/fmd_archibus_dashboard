@@ -8,6 +8,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+DROP VIEW if exists [afm].[dash_cmu_problem_types]
+GO 
+
 CREATE VIEW [afm].[dash_cmu_problem_types]
 AS 
 (SELECT wr_id,
@@ -98,6 +101,8 @@ AS
 		END AS 'fy_close'
 FROM afm.wrhwr r
 LEFT JOIN afm.afm_users u ON r.requestor = u.user_name
-WHERE prob_type IS NOT NULL AND date_closed IS NOT NULL AND prob_type != 'TEST (DO NOT USE)' AND date_requested >= DateAdd(month, - 13, DateAdd(year, - 2, getDate())) AND date_requested < dateAdd(MS, - 3, DateAdd(MM, DateDiff(MM, 0, DateAdd(year, - 2, getDate())), 0)));
-									
+WHERE prob_type IS NOT NULL 
+AND date_closed IS NOT NULL 
+AND prob_type != 'TEST (DO NOT USE)' 
+);									
 GO
