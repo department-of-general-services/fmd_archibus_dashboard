@@ -8,12 +8,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+DROP VIEW if exists [afm].[dash_benchmarks]
+GO 
+
 CREATE VIEW [afm].[dash_benchmarks]
 AS 
 (SELECT wr_id,
 	STATUS,
 	fy_request,
 	CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month_request,
+	CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120) AS calendar_month_close,
 	DATEDIFF(day, date_requested, date_completed) AS days_to_completion,
 	DATEDIFF(day, date_requested, DateAdd(year, - 2, getDate())) AS days_open,
 	primary_type,
