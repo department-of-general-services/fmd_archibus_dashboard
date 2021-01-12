@@ -106,6 +106,8 @@ GO
 			wr_id,
 			STATUS,
 			fy_request,
+			date_requested,
+			date_closed,
 			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_requested), 0),
