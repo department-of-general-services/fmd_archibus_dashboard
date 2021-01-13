@@ -94,7 +94,7 @@ GO
 			LEFT JOIN afm.afm_users u ON r.requestor = u.user_name
 		WHERE
 			prob_type IS NOT NULL
-			AND date_closed IS NOT NULL
+			--AND date_closed IS NOT NULL
 			AND prob_type != 'TEST (DO NOT USE)'
 	);
 
@@ -107,6 +107,7 @@ GO
 			STATUS,
 			fy_request,
 			date_requested,
+			date_completed,
 			date_closed,
 			CONVERT(
 				VARCHAR(7),
@@ -125,7 +126,6 @@ GO
 				DateAdd(year, -2, getDate())
 			) AS days_open,
 			primary_type,
-			date_completed,
 			CASE
 				WHEN primary_type IN (
 					'BUILDING',
