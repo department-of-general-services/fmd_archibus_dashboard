@@ -5,12 +5,15 @@
 
 	<dataSource id="ds_monthly_volume_disaggregated">
 		<sql dialect="sqlserver">
-		SELECT wr_id, calendar_month, action
+		SELECT wr_id, date_requested, primary_type, building_name, status, calendar_month, action
 		FROM (
 			SELECT wr_id, 
+				date_requested, 
+				primary_type,
+				building_name,
+				status,
 				CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
 				'Opened' as action
-				
 			FROM dash_benchmarks
 			WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
 				AND date_requested &lt;  DateAdd(year, -2, getDate())
@@ -18,12 +21,16 @@
 			UNION
 
 			SELECT wr_id, 
+				date_requested, 
+				primary_type,
+				building_name,
+				status,
 				CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120) AS calendar_month,
 				'Closed' as action
 			FROM dash_benchmarks
 			WHERE date_closed &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
 				AND date_closed &lt;  DateAdd(year, -2, getDate())
-		) wrhwr
+		) benchmarks
 			WHERE calendar_month = ${parameters['summaryMonth']}
 			AND action =  ${parameters['summaryAction']}
 		</sql>
@@ -31,12 +38,15 @@
 		<table name="wrhwr"
 			role="main" />
 		<field name="wr_id"
-			dataType="text"/>
-		<field name="calendar_month"
-			dataType="text"
-			size="7"/>
-		<field name="action"
-			dataType="text"/>
+			dataType="text" />
+		<field name="status"
+			dataType="text" />
+		<field name="date_requested"
+			dataType="date" />
+		<field name="primary_type"
+			dataType="text" />
+		<field name="status"
+			dataType="text" />
 		<parameter name="summaryMonth"
 			dataType="text"
 			value=""/>
@@ -161,13 +171,15 @@
 			name="wr_id">
 			<title >Work Request ID</title>
 		</field>
+
 		<field table="wrhwr"
-			name="calendar_month">
-			<title >Date Requested</title>
-		</field>
+			name="status" />
 		<field table="wrhwr"
-			name="action">
-			<title >Action</title>
-		</field>
+			name="date_requested" />
+		<field table="wrhwr"
+			name="primary_type" />
+		<field table="wrhwr"
+			name="status" />
+
 	</panel>
 </view>
