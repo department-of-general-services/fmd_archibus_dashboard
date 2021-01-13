@@ -1,4 +1,4 @@
-USE [DGS_RAND_ARCHIBUS]
+USE [DGS_Archibus]
 GO
 	/****** Object:  View [afm].[dash_benchmarks]   Script Date: 1/11/2021 2:54:33 PM ******/
 SET
@@ -122,7 +122,7 @@ GO
 			DATEDIFF(
 				day,
 				date_requested,
-				DateAdd(year, - 2, getDate())
+				DateAdd(year, -2, getDate())
 			) AS days_open,
 			primary_type,
 			date_completed,
