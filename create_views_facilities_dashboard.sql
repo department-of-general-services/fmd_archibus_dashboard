@@ -12,7 +12,7 @@ GO
 	CREATE VIEW [afm].[dash_cmu_problem_types] AS (
 		SELECT
 			wr_id,
-			STATUS,
+			r.STATUS,
 			CASE
 				WHEN prob_type = 'AIR QUALITY' THEN 'AIR QUALITY'
 				WHEN prob_type = 'APPLIANCE' THEN 'APPLIANCE'
@@ -81,7 +81,7 @@ GO
 			date_completed,
 			date_closed,
 			u.role_name,
-			b.name AS building_name
+			b.name AS building_name,
 			CASE
 				WHEN datepart(mm, date_requested) >= 7 THEN datepart(yy, date_requested) + 1
 				ELSE datepart(yy, date_requested)
@@ -93,10 +93,9 @@ GO
 		FROM
 			afm.wrhwr r
 			LEFT JOIN afm.afm_users u ON r.requestor = u.user_name
-			LEFT JOIN bl b on r.bl_id = b.bl_id 
+			LEFT JOIN bl b on r.bl_id = b.bl_id
 		WHERE
-			prob_type IS NOT NULL
-			--AND date_closed IS NOT NULL
+			prob_type IS NOT NULL --AND date_closed IS NOT NULL
 			AND prob_type != 'TEST (DO NOT USE)'
 	);
 
