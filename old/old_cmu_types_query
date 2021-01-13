@@ -85,10 +85,5 @@
 											prob_type IS NOT NULL
 											AND date_closed IS NOT NULL
 											AND prob_type != 'TEST (DO NOT USE)'
-											AND date_requested &gt;= DateAdd(month, -13, DateAdd(year, -2, getDate()))
-											AND date_requested &lt; dateAdd(
-												MS,
-												-3,
-												DateAdd(MM, DateDiff(MM, 0, DateAdd(year, -2, getDate())), 0)
-											)
+											
 									) AS CMU_problem_types

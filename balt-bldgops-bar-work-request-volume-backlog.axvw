@@ -258,10 +258,17 @@
 	<panel type="grid"
 		id="chartDrillDown_metrics"
 		dataSource="ds_chart_metrics_disaggregated"
-		recordLimit="250"		
+		recordLimit="250"
 		hidden="true"
 		showLabels="false"
 		showOnLoad="false">
+		<action id="exportXLS">
+			<title>Excel</title>
+			<command type="exportPanel"
+				outputType="xls"
+				panelId="chartDrillDown_metrics"
+				recordLimit="0"/>
+		</action>
 		<title >Details: Volume and Backlog</title>
 		<field table="wrhwr"
 			name="wr_id">

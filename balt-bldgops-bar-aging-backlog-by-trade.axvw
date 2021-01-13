@@ -148,6 +148,13 @@
         hidden="true"
         showLabels="true"
         showOnLoad="false">
+        <action id="exportXLS">
+            <title>Excel</title>
+            <command type="exportPanel"
+                outputType="xls"
+                panelId="chartDrillDown_aging_by_trade"
+                recordLimit="0"/>
+        </action>
         <title translatable="true">Details: Aging WRs by Trade</title>
         <field table="wrhwr"
             name="wr_id">
