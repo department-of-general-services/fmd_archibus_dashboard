@@ -33,7 +33,7 @@ def get_files(extensions):
 
 
 def loop_through_axvw_and_js(prod_dir, to_replace, replace_with):
-    file_paths = get_files(['*.axvw', '*.js'])
+    file_paths = get_files(['*.axvw', '*.js', '*.sql'])
     for file_path in file_paths:
         print(file_path.name)
         with open(file_path, "r") as f:
