@@ -12,7 +12,7 @@ GO
 	CREATE VIEW [afm].[dash_cmu_problem_types] AS (
 		SELECT
 			wr_id,
-			STATUS,
+			r.status,
 			CASE
 				WHEN prob_type = 'AIR QUALITY' THEN 'AIR QUALITY'
 				WHEN prob_type = 'APPLIANCE' THEN 'APPLIANCE'
@@ -106,7 +106,7 @@ GO
 	CREATE VIEW [afm].[dash_benchmarks] AS (
 		SELECT
 			wr_id,
-			STATUS,
+			status,
 			building_name,
 			fy_request,
 			date_requested,
@@ -129,6 +129,7 @@ GO
 				DateAdd(year, -2, getDate())
 			) AS days_open,
 			primary_type,
+			problem_type,
 			CASE
 				WHEN primary_type IN (
 					'BUILDING',
