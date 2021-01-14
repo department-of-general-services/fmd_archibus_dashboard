@@ -1,4 +1,4 @@
-USE [DGS_Archibus]
+USE [DGS_RAND_ARCHIBUS]
 GO
 	/****** Object:  View [afm].[dash_benchmarks]   Script Date: 1/11/2021 2:54:33 PM ******/
 SET
@@ -13,11 +13,6 @@ GO
 		SELECT
 			wr_id,
 			r.status,
-			description,
-			date_requested,
-			date_completed,
-			date_closed,
-			prob_type AS problem_type,
 			CASE
 				WHEN prob_type = 'AIR QUALITY' THEN 'AIR QUALITY'
 				WHEN prob_type = 'APPLIANCE' THEN 'APPLIANCE'
@@ -81,7 +76,12 @@ GO
 				WHEN prob_type = 'WINDOW' THEN 'WINDOW'
 				ELSE 'SMALL_TYPES_DISCARD'
 			END AS primary_type,
+			prob_type AS problem_type,
+			date_requested,
+			date_completed,
+			date_closed,
 			u.role_name,
+			b.name AS building_name,
 			CASE
 				WHEN datepart(mm, date_requested) >= 7 THEN datepart(yy, date_requested) + 1
 				ELSE datepart(yy, date_requested)
@@ -93,9 +93,10 @@ GO
 		FROM
 			afm.wrhwr r
 			LEFT JOIN afm.afm_users u ON r.requestor = u.user_name
+			LEFT JOIN bl b on r.bl_id = b.bl_id 
 		WHERE
 			prob_type IS NOT NULL
-			AND date_closed IS NOT NULL
+			--AND date_closed IS NOT NULL
 			AND prob_type != 'TEST (DO NOT USE)'
 	);
 
@@ -106,13 +107,11 @@ GO
 		SELECT
 			wr_id,
 			status,
-			description,
-			date_completed,
-			date_requested,
-			date_closed,
+			building_name,
 			fy_request,
-			primary_type,
-			problem_type,
+			date_requested,
+			date_completed,
+			date_closed,
 			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_requested), 0),
@@ -127,8 +126,9 @@ GO
 			DATEDIFF(
 				day,
 				date_requested,
-				DateAdd(year, - 2, getDate())
+				DateAdd(year, -2, getDate())
 			) AS days_open,
+			primary_type,
 			CASE
 				WHEN primary_type IN (
 					'BUILDING',
