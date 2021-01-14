@@ -13,6 +13,11 @@ GO
 		SELECT
 			wr_id,
 			r.status,
+			r.description,
+			date_requested,
+			date_completed,
+			date_closed,
+			prob_type AS problem_type,
 			CASE
 				WHEN prob_type = 'AIR QUALITY' THEN 'AIR QUALITY'
 				WHEN prob_type = 'APPLIANCE' THEN 'APPLIANCE'
@@ -76,12 +81,9 @@ GO
 				WHEN prob_type = 'WINDOW' THEN 'WINDOW'
 				ELSE 'SMALL_TYPES_DISCARD'
 			END AS primary_type,
-			prob_type AS problem_type,
-			date_requested,
-			date_completed,
-			date_closed,
 			u.role_name,
-			b.name AS building_name
+			b.name AS building_name,
+			b.bl_id AS b_number,
 			CASE
 				WHEN datepart(mm, date_requested) >= 7 THEN datepart(yy, date_requested) + 1
 				ELSE datepart(yy, date_requested)
@@ -93,10 +95,10 @@ GO
 		FROM
 			afm.wrhwr r
 			LEFT JOIN afm.afm_users u ON r.requestor = u.user_name
-			LEFT JOIN bl b on r.bl_id = b.bl_id 
+			LEFT JOIN bl b ON r.bl_id = b.bl_id 
 		WHERE
 			prob_type IS NOT NULL
-			--AND date_closed IS NOT NULL
+			AND date_closed IS NOT NULL
 			AND prob_type != 'TEST (DO NOT USE)'
 	);
 
@@ -107,11 +109,16 @@ GO
 		SELECT
 			wr_id,
 			status,
-			building_name,
-			fy_request,
-			date_requested,
+			description,
 			date_completed,
+			date_requested,
 			date_closed,
+			fy_request,
+			role_name, 
+			building_name,
+			b_number,
+			primary_type,
+			problem_type,
 			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_requested), 0),
@@ -126,10 +133,8 @@ GO
 			DATEDIFF(
 				day,
 				date_requested,
-				DateAdd(year, -2, getDate())
+				DateAdd(year, - 2, getDate())
 			) AS days_open,
-			primary_type,
-			problem_type,
 			CASE
 				WHEN primary_type IN (
 					'BUILDING',
