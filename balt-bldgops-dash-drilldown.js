@@ -34,3 +34,20 @@ function onDrillDownByTimespan(item) {
 
 }
 
+function onDrillDownByCalMonth(item) {
+	//var restriction = new Ab.view.Restriction();
+	//restriction.addClause('wrhwr.trade', item.selectedChartData['wrhwr.trade']);
+
+	var panel = View.panels.get("chartDrillDown_monthly_volume");
+
+	panel.addParameter('summaryMonth', item.selectedChartData['wrhwr.calendar_month']);
+	panel.addParameter('summaryAction', item.selectedChartData['wrhwr.action']);
+
+	panel.refresh();
+
+	panel.showInWindow({
+		width: 800,
+		height: 300
+	});
+
+}

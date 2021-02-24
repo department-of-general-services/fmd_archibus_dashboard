@@ -1,6 +1,60 @@
 <view version="2.0">
 	<!-- <title>Volume Received per Month</title> -->
 
+	<js file="balt-bldgops-dash-drilldown.js" />
+
+	<dataSource id="ds_monthly_volume_disaggregated">
+		<sql dialect="sqlserver">
+		SELECT wr_id, date_requested, primary_type, building_name, status, calendar_month, action
+		FROM (
+			SELECT wr_id, 
+				date_requested, 
+				primary_type,
+				building_name,
+				status,
+				CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
+				'Opened' as action
+			FROM dash_benchmarks
+			WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
+				AND date_requested &lt;  DateAdd(year, -2, getDate())
+		
+			UNION
+
+			SELECT wr_id, 
+				date_requested, 
+				primary_type,
+				building_name,
+				status,
+				CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120) AS calendar_month,
+				'Closed' as action
+			FROM dash_benchmarks
+			WHERE date_closed &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
+				AND date_closed &lt;  DateAdd(year, -2, getDate())
+		) benchmarks
+			WHERE calendar_month = ${parameters['summaryMonth']}
+			AND action =  ${parameters['summaryAction']}
+		</sql>
+
+		<table name="wrhwr"
+			role="main" />
+		<field name="wr_id"
+			dataType="text" />
+		<field name="status"
+			dataType="text" />
+		<field name="date_requested"
+			dataType="date" />
+		<field name="primary_type"
+			dataType="text" />
+		<field name="status"
+			dataType="text" />
+		<parameter name="summaryMonth"
+			dataType="text"
+			value=""/>
+		<parameter name="summaryAction"
+			dataType="text"
+			value=""/>
+	</dataSource>
+
 	<dataSource id="ds_monthly_volume">
 		<sql dialect="sqlserver">
 		SELECT calendar_month, action, count_wr
@@ -8,9 +62,8 @@
 			SELECT CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
 				'Opened' as action,
 				COUNT(*) as count_wr
-			FROM wrhwr
-			WHERE prob_type IS NOT NULL
-				AND date_requested &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
+			FROM dash_benchmarks
+			WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
 				AND date_requested &lt;  DateAdd(year, -2, getDate())
 			GROUP BY CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120)
 
@@ -19,9 +72,8 @@
 			SELECT CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120) AS calendar_month,
 				'Closed' as action,
 				COUNT(*) as count_wr
-			FROM wrhwr
-			WHERE prob_type IS NOT NULL
-				AND date_closed &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
+			FROM dash_benchmarks
+			WHERE date_closed &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
 				AND date_closed &lt;  DateAdd(year, -2, getDate())
 			GROUP BY CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120)
 
@@ -48,7 +100,7 @@
 		type="grouping">
 		<sql dialect="generic">
 			SELECT CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month
-			FROM wrhwr
+			FROM dash_benchmarks
 			WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(year, -2, getDate()))
 				AND date_requested &lt;  DateAdd(year, -2, getDate())
 		</sql>
@@ -67,10 +119,15 @@
 		showLegendAsPopUp="false"
 		legendLocation="bottom"
 		unitPrecision="0"
-        showUnitPrefixes="true"
+		showUnitPrefixes="true"
 		showDataTips="true"
 		backgroundColor="0xc6e2ff">
 		<title>Workflow by Calendar Month</title>
+
+		<event type="onClickItem">
+			<command type="callFunction"
+				functionName="onDrillDownByCalMonth"/>
+		</event>
 
 		<groupingAxis dataSource="ds_monthly_groupingAxis2"
 			table="wrhwr"
@@ -92,5 +149,37 @@
 			showLabel="true">
 			<title>Count</title>
 		</dataAxis>
+	</panel>
+
+	<!-- a detail report -->
+	<panel type="grid"
+		id="chartDrillDown_monthly_volume"
+		dataSource="ds_monthly_volume_disaggregated"
+		recordLimit="250"
+		hidden="true"
+		showLabels="false"
+		showOnLoad="false">
+		<action id="exportXLS">
+			<title>Excel</title>
+			<command type="exportPanel"
+				outputType="xls"
+				panelId="chartDrillDown_monthly_volume"
+				recordLimit="0"/>
+		</action>
+		<title >Details: Workflow By Calendar Month</title>
+		<field table="wrhwr"
+			name="wr_id">
+			<title >Work Request ID</title>
+		</field>
+
+		<field table="wrhwr"
+			name="status" />
+		<field table="wrhwr"
+			name="date_requested" />
+		<field table="wrhwr"
+			name="primary_type" />
+		<field table="wrhwr"
+			name="status" />
+
 	</panel>
 </view>

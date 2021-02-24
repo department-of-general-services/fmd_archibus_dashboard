@@ -120,7 +120,7 @@
         unitPrecision="0"
         showUnitPrefixes="true"
         backgroundColor="0xc6e2ff">
-        <title>Aging Backlog By Trade</title>
+        <title>Aging Backlog By Trade (Open 30+ Days)</title>
 
         <event type="onClickItem">
             <command type="callFunction"
@@ -148,6 +148,13 @@
         hidden="true"
         showLabels="true"
         showOnLoad="false">
+        <action id="exportXLS">
+            <title>Excel</title>
+            <command type="exportPanel"
+                outputType="xls"
+                panelId="chartDrillDown_aging_by_trade"
+                recordLimit="0"/>
+        </action>
         <title translatable="true">Details: Aging WRs by Trade</title>
         <field table="wrhwr"
             name="wr_id">
