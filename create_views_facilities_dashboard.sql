@@ -98,7 +98,7 @@ GO
 			LEFT JOIN bl b ON r.bl_id = b.bl_id 
 		WHERE
 			prob_type IS NOT NULL
-			AND date_closed IS NOT NULL
+			--AND date_closed IS NOT NULL
 			AND prob_type != 'TEST (DO NOT USE)'
 	);
 
