@@ -5,13 +5,14 @@
 
 	<dataSource id="ds_monthly_volume_disaggregated">
 		<sql dialect="sqlserver">
-		SELECT wr_id, date_requested, primary_type, building_name, status, calendar_month, action
+		SELECT *
 		FROM (
 			SELECT wr_id, 
 				date_requested, 
-				primary_type,
+				problem_type,
 				building_name,
 				status,
+				description,
 				CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
 				'Opened' as action
 			FROM dash_benchmarks
@@ -22,9 +23,10 @@
 
 			SELECT wr_id, 
 				date_requested, 
-				primary_type,
+				problem_type,
 				building_name,
 				status,
+				description,
 				CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120) AS calendar_month,
 				'Closed' as action
 			FROM dash_benchmarks
@@ -39,13 +41,15 @@
 			role="main" />
 		<field name="wr_id"
 			dataType="text" />
-		<field name="status"
-			dataType="text" />
 		<field name="date_requested"
 			dataType="date" />
-		<field name="primary_type"
+		<field name="problem_type"
+			dataType="text" />
+		<field name="building_name"
 			dataType="text" />
 		<field name="status"
+			dataType="text" />
+		<field name="description"
 			dataType="text" />
 		<parameter name="summaryMonth"
 			dataType="text"
@@ -77,7 +81,7 @@
 				AND date_closed &lt;  DateAdd(year, -2, getDate())
 			GROUP BY CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120)
 
-		) wrhwr
+		) benchmarks
 			WHERE calendar_month = ${parameters['summaryValueForThisGroup']}
 		</sql>
 
@@ -171,15 +175,25 @@
 			name="wr_id">
 			<title >Work Request ID</title>
 		</field>
-
 		<field table="wrhwr"
-			name="status" />
+			name="date_requested">
+			<title >Date Requested</title>
+		</field>
 		<field table="wrhwr"
-			name="date_requested" />
+			name="problem_type">
+			<title >Problem Type</title>
+		</field>
 		<field table="wrhwr"
-			name="primary_type" />
+			name="building_name">
+			<title >Building Name</title>
+		</field>
 		<field table="wrhwr"
-			name="status" />
-
+			name="status">
+			<title >Status</title>
+		</field>
+		<field table="wrhwr"
+			name="description">
+			<title >Description</title>
+		</field>
 	</panel>
 </view>
