@@ -4,16 +4,16 @@
 	<dataSource id="ds_wrhwr_metrics">
 		<sql dialect="sqlserver">
 			SELECT 'Opened in Last 30 Days' AS label, COUNT(*) as count_wr
-			FROM wrhwr
-			WHERE prob_type IS NOT NULL
-				AND prob_type != 'TEST(DO NOT USE)'
+			FROM dash_benchmarks
+			WHERE problem_type IS NOT NULL
+				AND problem_type != 'TEST(DO NOT USE)'
 				AND date_requested &gt;= DateAdd(day, -30, DateAdd(year, -2, getDate()))
 				AND date_requested &lt; DateAdd(year, -2, getDate())
 			UNION
 			SELECT 'Closed in Last 30 Days' AS label, COUNT(*) as count_wr
-			FROM wrhwr
-			WHERE prob_type IS NOT NULL
-				AND prob_type != 'TEST(DO NOT USE)'
+			FROM dash_benchmarks
+			WHERE problem_type IS NOT NULL
+				AND problem_type != 'TEST(DO NOT USE)'
 				AND status = 'Clo'
 				AND date_closed &gt;= DateAdd(day, -30, DateAdd(year, -2, getDate()))
 				AND date_closed &lt; DateAdd(year, -2, getDate())
