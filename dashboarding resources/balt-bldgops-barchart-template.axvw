@@ -1,0 +1,96 @@
+<view version="2.0">
+	<!-- <title>Monthly chart template</title> -->
+
+	<dataSource id="ds_monthly_pct_ontime">
+		<sql dialect="sqlserver">
+		SELECT
+			calendar_month_close,
+			SUM(is_on_time) * 100 / COUNT(*) as percent_ontime,
+			COUNT(*) as wr_volume,
+			SUM(is_on_time) as count_on_time
+		FROM
+			(
+				SELECT
+					calendar_month_close,
+					date_completed,
+					primary_type,
+					unfinished_but_late,
+					CASE
+						WHEN days_to_completion &lt;= benchmark THEN CAST(1 AS DECIMAL)
+						WHEN unfinished_but_late = 1 THEN CAST(0 AS DECIMAL)
+						ELSE CAST(0 AS DECIMAL)
+					END AS is_on_time
+				FROM
+					(
+						SELECT
+							*,
+							CASE
+								WHEN (
+									date_completed IS NULL
+									AND days_open &lt; benchmark
+								) then CAST(1 AS DECIMAL)
+								ELSE CAST(0 AS DECIMAL)
+							END AS unfinished_but_late
+						FROM
+							(SELECT * 
+							FROM dash_benchmarks
+								WHERE
+									primary_type != 'PREVENTIVE'
+									AND primary_type != 'SMALL_TYPES_DISCARD'
+									AND date_closed &gt;= DateAdd(month, -13, DateAdd(year, -2, getDate()))
+										AND date_closed &lt; dateAdd(
+											MS,
+											-3,
+											DateAdd(MM, DateDiff(MM, 0, DateAdd(year, -2, getDate())), 0)
+										)
+							) AS filtered_benchmarks
+					) AS catch_unfinished
+			) AS is_on_time
+		WHERE
+			date_completed IS NOT NULL
+			OR unfinished_but_late = 1
+		GROUP BY
+			calendar_month_close
+		</sql>
+
+		<table name="wrhwr"
+			role="main" />
+		<field name="calendar_month_close"
+			dataType="text"
+			size="7"/>
+		<field name="percent_ontime"
+			dataType="number"
+			decimals="1" />
+		<sortField name="calendar_month_close"
+			table="wrhwr"/>
+	</dataSource>
+
+	<panel id="monthly_pct_ontime"
+		type="htmlChart"
+		controlType="columnChart"
+		dataSource="ds_monthly_pct_ontime"
+		showLegendOnLoad="false"
+		showLegendAsPopUp="false"
+		legendLocation="bottom"
+		unitPrecision="0"
+		showUnitPrefixes="true"
+		showDataTips="true"
+		backgroundColor="0xc6e2ff">
+		<title>Percentage of CMs Completed On Time</title>
+
+		<groupingAxis dataSource="ds_monthly_pct_ontime"
+			table="wrhwr"
+			field="calendar_month_close"
+			showLabel="true"
+			labelRotation="0">
+			<title>Month</title>
+		</groupingAxis>
+
+		<dataAxis dataSource="ds_monthly_pct_ontime"
+			table="wrhwr"
+			field="percent_ontime"
+			showLabel="true">
+			<title>% On-Time</title>
+		</dataAxis>
+	</panel>
+</view>
