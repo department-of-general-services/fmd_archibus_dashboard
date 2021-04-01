@@ -130,6 +130,7 @@ GO
 			wr_id,
 			status,
 			description,
+			supervisor,
 			date_completed,
 			date_requested,
 			date_closed,
@@ -139,6 +140,7 @@ GO
 			b_number,
 			primary_type,
 			problem_type,
+			PM_type,
 			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_requested), 0),
