@@ -35,7 +35,7 @@
         WHERE
             trade != 'None'
             AND trade = ${parameters['summaryValueForThisGroup']}
-            AND status IN ('AA', 'A', 'I', 'Com') 
+            AND status IN ('AA', 'A', 'I', 'Com', 'S', 'HC', 'HMI', 'RMI') 
         </sql>
         <table name="wrhwr"
             role="main"/>
@@ -94,7 +94,7 @@
             ) trades
         WHERE
             trade != 'None'
-            AND status IN ('AA', 'A', 'I', 'Com')
+            AND status IN ('AA', 'A', 'I', 'Com', 'S', 'HC', 'HMI', 'RMI')
         GROUP BY
             trade
         </sql>
