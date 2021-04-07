@@ -70,14 +70,15 @@ GO
 					'FUEL TANK TEST',
 					'GENERATOR TEST', 
 					'KITCHEN PM',
-					'SEMI ANNUAL'
+					'SEMI ANNUAL',
+					'UTILITY ROOMS'
 				)) 
 				THEN 'PREVENTIVE_GENERAL'
 				WHEN prob_type = 'HVAC|PM'
 				     OR (prob_type = 'PREVENTIVE MAINT' AND p.pm_group IN (
 					'HEAT CHECK TEST',
 					'HEATING LEVELS', 
-					'UTILITY ROOMS', 
+					'HVAC INSPECTION',
 					'HVAC FILTER CHAN'
 				))
 				THEN 'PREVENTIVE_HVAC'
