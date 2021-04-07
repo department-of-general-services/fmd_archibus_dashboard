@@ -19,7 +19,7 @@ GO
 			date_completed,
 			date_closed,
 			prob_type AS problem_type,
-			p.pm_group AS PM_type,
+			p.pm_group AS pm_group,
 			CASE
 				WHEN prob_type = 'AIR QUALITY' THEN 'AIR QUALITY'
 				WHEN prob_type = 'APPLIANCE' THEN 'APPLIANCE'
@@ -50,7 +50,6 @@ GO
 				WHEN prob_type IN (
 					'HVAC|INFRASTRUCTURE',
 					'HVAC|HEATING OIL',
-					'HVAC|INSPECTION',
 					'HVAC|REPAIR',
 					'HVAC|REPLACEMENT',
 					'HVAC'
@@ -61,27 +60,32 @@ GO
 					'GENERATOR PM',
 					'INSPECTION',
 					'FUEL INSPECTION'
-				) OR (prob_type = 'PREVENTIVE MAINT' AND p.pm_group IN (
-				    'BASEMENT INSPECT', 
-				    'BLDG INSPECTION', 
-				    'ELEVATOR TEST', 
-					'EXTERMINATION', 
-					'FLOOR BUFFING',
-					'FUEL TANK TEST',
-					'GENERATOR TEST', 
-					'KITCHEN PM',
-					'SEMI ANNUAL',
-					'UTILITY ROOMS'
-				)) 
-				THEN 'PREVENTIVE_GENERAL'
-				WHEN prob_type = 'HVAC|PM'
-				     OR (prob_type = 'PREVENTIVE MAINT' AND p.pm_group IN (
-					'HEAT CHECK TEST',
-					'HEATING LEVELS', 
-					'HVAC INSPECTION',
-					'HVAC FILTER CHAN'
-				))
-				THEN 'PREVENTIVE_HVAC'
+				)
+				OR (
+					prob_type = 'PREVENTIVE MAINT'
+					AND p.pm_group IN (
+						'BASEMENT INSPECT',
+						'BLDG INSPECTION',
+						'ELEVATOR TEST',
+						'EXTERMINATION',
+						'FLOOR BUFFING',
+						'FUEL TANK TEST',
+						'GENERATOR TEST',
+						'KITCHEN PM',
+						'SEMI ANNUAL',
+						'UTILITY ROOMS'
+					)
+				) THEN 'PREVENTIVE_GENERAL'
+				WHEN prob_type IN ('HVAC|PM', 'HVAC|INSPECTION')
+				OR (
+					prob_type = 'PREVENTIVE MAINT'
+					AND p.pm_group IN (
+						'HEAT CHECK TEST',
+						'HEATING LEVELS',
+						'HVAC INSPECTION',
+						'HVAC FILTER CHAN'
+					)
+				) THEN 'PREVENTIVE_HVAC'
 				WHEN prob_type IN ('LAWN', 'LANDSCAPING') THEN 'LANDSCAPING'
 				WHEN prob_type = 'LOCK' THEN 'LOCK'
 				WHEN prob_type IN ('PAINT', 'PAINTING') THEN 'PAINTING'
@@ -118,8 +122,7 @@ GO
 			LEFT JOIN afm.bl b ON r.bl_id = b.bl_id
 			LEFT JOIN afm.pms p ON r.pms_id = p.pms_id
 		WHERE
-			prob_type IS NOT NULL
-			--AND date_closed IS NOT NULL
+			prob_type IS NOT NULL --AND date_closed IS NOT NULL
 			AND prob_type != 'TEST (DO NOT USE)'
 	);
 
@@ -141,7 +144,7 @@ GO
 			b_number,
 			primary_type,
 			problem_type,
-			PM_type,
+			pm_group,
 			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_requested), 0),
@@ -182,7 +185,7 @@ GO
 					'CARPENTRY',
 					'ELEVATOR',
 					'PAINTING',
-					'PREVENTIVE_HVAC', 
+					'PREVENTIVE_HVAC',
 					'PREVENTIVE_GENERAL'
 				) THEN 21
 				WHEN primary_type IN ('HVAC', 'WINDOW') THEN 30
