@@ -11,21 +11,19 @@
             (
                 SELECT
                     wr_id,
+                    supervisor,
                     status,
                     building_name,
                     date_requested,
                     description,
                     problem_type,
                     CASE
-                        WHEN problem_type LIKE 'ELEC%'
-                        OR problem_type = 'OUTLETS' THEN 'Electrical'
-                        WHEN problem_type IN ('PAINT', 'PAINTING') THEN 'Painting'
-                        WHEN problem_type LIKE 'PLUMB%' THEN 'Plumbing'
-                        WHEN problem_type IN ('CARPENTRY', 'DOOR', 'LOCK', 'WALL') THEN 'Carpentry'
-                        WHEN (problem_type LIKE 'HVAC%'
-                        OR problem_type IN ('CHILLERS', 'COOLING TOWERS')) 
-                        AND problem_type != 'HVAC|PM' THEN 'HVAC CM'
-                        WHEN problem_type IN ('PREVENTIVE MAINT', 'HVAC|PM') THEN 'HVAC PM'
+                        WHEN primary_type = 'ELECTRICAL' THEN 'Electrical'
+                        WHEN primary_type = 'PAINTING' THEN 'Painting'
+                        WHEN primary_type = 'PLUMBING' THEN 'Plumbing'
+                        WHEN primary_type IN ('CARPENTRY', 'DOOR', 'LOCK') THEN 'Carpentry'
+                        WHEN primary_type = 'HVAC' THEN 'HVAC CM'
+                        WHEN primary_type = 'PREVENTIVE_HVAC' THEN 'HVAC PM'
                         ELSE 'None'
                     END AS trade
                 FROM
@@ -37,7 +35,7 @@
         WHERE
             trade != 'None'
             AND trade = ${parameters['summaryValueForThisGroup']}
-            AND status IN ('AA', 'A', 'I', 'Com') 
+            AND status IN ('AA', 'A', 'I', 'Com', 'S', 'HC', 'HMI', 'RMI') 
         </sql>
         <table name="wrhwr"
             role="main"/>
@@ -59,6 +57,9 @@
         <field table="wrhwr"
             name="description"
             dataType="text"/>
+        <field table="wrhwr"
+            name="supervisor"
+            dataType="text"/>
         <parameter name="summaryValueForThisGroup"
             dataType="text"
             value=""/>
@@ -77,26 +78,23 @@
                     status,
                     date_requested,
                     CASE
-                        WHEN prob_type LIKE 'ELEC%'
-                        OR prob_type = 'OUTLETS' THEN 'Electrical'
-                        WHEN prob_type IN ('PAINT', 'PAINTING') THEN 'Painting'
-                        WHEN prob_type LIKE 'PLUMB%' THEN 'Plumbing'
-                        WHEN prob_type IN ('CARPENTRY', 'DOOR', 'LOCK', 'WALL') THEN 'Carpentry'
-                        WHEN (prob_type LIKE 'HVAC%'
-                        OR prob_type IN ('CHILLERS', 'COOLING TOWERS')) 
-                        AND prob_type != 'HVAC|PM' THEN 'HVAC CM'
-                        WHEN prob_type IN ('PREVENTIVE MAINT', 'HVAC|PM') THEN 'HVAC PM'
+                        WHEN primary_type = 'ELECTRICAL' THEN 'Electrical'
+                        WHEN primary_type = 'PAINTING' THEN 'Painting'
+                        WHEN primary_type = 'PLUMBING' THEN 'Plumbing'
+                        WHEN primary_type IN ('CARPENTRY', 'DOOR', 'LOCK') THEN 'Carpentry'
+                        WHEN primary_type = 'HVAC' THEN 'HVAC CM'
+                        WHEN primary_type = 'PREVENTIVE_HVAC' THEN 'HVAC PM'
                         ELSE 'None'
                     END AS trade
                 FROM
-                    wrhwr
+                    dash_benchmarks
                 WHERE
                     date_requested &gt;= DateAdd(year, -1, DateAdd(year, -2, getDate()))
 				    AND date_requested &lt;  DateAdd(month, -1, DateAdd(year, -2, getDate()))
             ) trades
         WHERE
             trade != 'None'
-            AND status IN ('AA', 'A', 'I', 'Com')
+            AND status IN ('AA', 'A', 'I', 'Com', 'S', 'HC', 'HMI', 'RMI')
         GROUP BY
             trade
         </sql>
@@ -179,6 +177,10 @@
         <field table="wrhwr"
             name="description">
             <title >Description</title>
+        </field>
+        <field table="wrhwr"
+            name="supervisor">
+            <title >Supervisor</title>
         </field>
     </panel>
 </view>
