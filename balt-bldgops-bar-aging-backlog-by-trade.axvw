@@ -57,6 +57,9 @@
             name="status"
             dataType="text"/>
         <field table="wrhwr"
+            name="supervisor"
+            dataType="text"/>
+        <field table="wrhwr"
             name="description"
             dataType="text"/>
         <parameter name="summaryValueForThisGroup"
@@ -175,6 +178,10 @@
         <field table="wrhwr"
             name="status">
             <title >Status</title>
+        </field>
+        <field table="wrhwr"
+            name="supervisor">
+            <title >Supervisor</title>
         </field>
         <field table="wrhwr"
             name="description">
