@@ -208,3 +208,13 @@ AS
 	);
 
 GO
+DROP VIEW if exists [afm].[dash_backlog]
+GO
+CREATE VIEW [afm].[dash_backlog]
+AS
+	(
+	SELECT *
+	FROM afm.dash_benchmarks b
+	WHERE b.status NOT IN ('Clo', 'Can', 'Rej', 'R')
+		AND days_open >= 90
+	);
