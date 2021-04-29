@@ -1,0 +1,57 @@
+<view version="2.0">
+	<title>Backlog Detail</title>
+
+	<layout id="main">
+		<west split="true"
+			initialSize="30%" />
+		<center />
+	</layout>
+
+	<layout id="nested_west"
+		containingLayout="main"
+		region="west">
+		<north split="true"
+			initialSize="15%" />
+		<south split="true"
+			initialSize="42%" />
+		<center />
+	</layout>
+
+	<layout id="nested_center"
+		containingLayout="main"
+		region="center">
+		<north split="true"
+			initialSize="42%" />
+		<center />
+	</layout>
+
+	<panel id="metrics_list"
+		type="view"
+		file="balt-bldgops-grid-workflow-last-30.axvw"
+		layout="nested_west"
+		region="north" />
+
+	<panel id="aging_by_trade"
+		type="view"
+		file="balt-bldgops-bar-aging-backlog-by-trade.axvw"
+		layout="nested_west"
+		region="center" />
+
+	<panel id="metric_chart"
+		type="view"
+		file="balt-bldgops-bar-work-request-volume-backlog.axvw"
+		layout="nested_west"
+		region="south" />
+
+	<panel id="volume_chart"
+		type="view"
+		file="balt-bldgops-bar-workflow-by-cal-month.axvw"
+		layout="nested_center"
+		region="north" />
+
+	<panel id="pct_closed_chart"
+		type="view"
+		file="balt-bldgops-pct-completed-ontime-cal-month.axvw"
+		layout="nested_center"
+		region="center" />
+</view>
