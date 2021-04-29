@@ -49,9 +49,5 @@
 		layout="nested_center"
 		region="north" />
 
-	<panel id="pct_closed_chart"
-		type="view"
-		file="balt-bldgops-pct-completed-ontime-cal-month.axvw"
-		layout="nested_center"
-		region="center" />
+
 </view>
