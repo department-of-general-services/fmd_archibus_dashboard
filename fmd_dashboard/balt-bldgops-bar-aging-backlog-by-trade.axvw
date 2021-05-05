@@ -29,8 +29,8 @@
                 FROM
                    dash_benchmarks
                 WHERE
-                    date_requested &gt;= DateAdd(year, -1, DateAdd(year, -2, getDate()))
-				    AND date_requested &lt;  DateAdd(month, -1, DateAdd(year, -2, getDate()))
+                    date_requested &gt;= DateAdd(year, -2, '20210430')
+				    AND date_requested &lt;  DateAdd(month, -1, '20210430')
             ) trades
         WHERE
             trade != 'None'
@@ -92,8 +92,8 @@
                 FROM
                     dash_benchmarks
                 WHERE
-                    date_requested &gt;= DateAdd(year, -1, DateAdd(year, -2, getDate()))
-				    AND date_requested &lt;  DateAdd(month, -1, DateAdd(year, -2, getDate()))
+                    date_requested &gt;= DateAdd(year, -2, '20210430')
+				    AND date_requested &lt;  DateAdd(month, -1, '20210430')
             ) trades
         WHERE
             trade != 'None'
