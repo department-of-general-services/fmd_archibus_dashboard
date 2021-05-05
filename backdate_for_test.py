@@ -37,4 +37,5 @@ if __name__ == '__main__':
     prod_dir = Path.cwd()
     to_replace = re.escape("getDate()")
     replace_with = r"DateAdd(year, -2, getDate())"
+    to_replace = re.escape("DateAdd(year, -2, getDate())")
     loop_through_axvw(prod_dir, to_replace, replace_with)

@@ -48,6 +48,7 @@ GO
 				WHEN prob_type = 'FLOOR' THEN 'FLOOR'
 				WHEN prob_type IN (
 					'HVAC|INFRASTRUCTURE',
+					'HVAC INFRASTRUCTURE',
 					'HVAC|HEATING OIL',
 					'HVAC|REPAIR',
 					'HVAC|REPLACEMENT',
@@ -74,6 +75,7 @@ GO
 						'SEMI ANNUAL',
 						'UTILITY ROOMS'
 					)
+					OR p.pm_group IS NULL
 				) THEN 'PREVENTIVE_GENERAL'
 				WHEN prob_type IN ('HVAC|PM', 'HVAC|INSPECTION')
 				OR (
@@ -205,7 +207,7 @@ GO
 	);
 
 GO
-	DROP VIEW if exists [afm].[dash_kpis]
+	DROP VIEW if exists [afm].[dash_kpis];
 GO
 	CREATE VIEW [afm].[dash_kpis] 
 	AS 
@@ -229,6 +231,9 @@ SELECT
 	wr_id,
 	calendar_month_close,
 	calendar_month_request,
+	date_requested,
+	date_completed,
+	date_closed,
 	fy_close,
 	fy_request,
 	primary_type,
@@ -237,6 +242,7 @@ SELECT
 	c.status,
 	b_number,
 	c.description,
+	pm_group,
 	CASE
 		WHEN days_to_completion <= benchmark THEN CAST(1 AS DECIMAL)
 		WHEN unfinished_but_late = 1 THEN CAST(0 AS DECIMAL)
@@ -244,16 +250,16 @@ SELECT
 	END AS is_on_time,
 	unfinished_but_late,
 	CASE
-		WHEN primary_type IN ('PREVENTIVE_HVAC') THEN 1
-		ELSE 0
+		WHEN primary_type IN ('PREVENTIVE_HVAC') THEN CAST(1 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
 	END AS is_ratio_pm,
 	CASE
-		WHEN primary_type IN ('HVAC') THEN 1
-		ELSE 0
+		WHEN primary_type IN ('HVAC') THEN CAST(1 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
 	END AS is_ratio_cm,
 	CASE
-		WHEN primary_type IN ('PREVENTIVE_HVAC', 'PREVENTIVE_GENERAL') THEN 1
-		ELSE 0
+		WHEN primary_type IN ('PREVENTIVE_HVAC', 'PREVENTIVE_GENERAL') THEN CAST(1 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
 	END AS is_any_pm
 FROM
 	catch_unfinished_but_late c
@@ -263,4 +269,45 @@ WHERE
 	 that are still in process and could be on time.*/
 	date_completed IS NOT NULL
 	OR unfinished_but_late = 1
+
+GO
+	DROP VIEW if exists [afm].[dash_cms_on_time];
+GO
+	CREATE VIEW [afm].[dash_cms_on_time] 
+	AS 
+	WITH grouped_by_month 
+AS (
+        SELECT
+            calendar_month_close,
+            SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
+            CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
+            SUM(is_on_time) as count_on_time
+        FROM
+            [afm].[dash_kpis]
+        WHERE
+            primary_type NOT IN ('PREVENTIVE_GENERAL', 'PREVENTIVE_HVAC')
+            AND primary_type != 'SMALL_TYPES_DISCARD'
+            AND date_closed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
+            AND date_closed < dateAdd(
+                MS,
+                -3,
+                DateAdd(
+                    MM,
+                    DateDiff(MM, 0, DateAdd(month, -1, getDate())),
+                    0
+                )
+            )
+        GROUP BY
+            calendar_month_close
+    )
+SELECT
+    *,
+    wr_volume * 100 / (
+        SELECT
+            MAX(wr_volume)
+        FROM
+            grouped_by_month
+    ) AS normed_volume
+FROM
+    grouped_by_month
 GO
