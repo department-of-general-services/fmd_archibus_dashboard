@@ -63,7 +63,7 @@ GO
 				)
 				OR (
 					prob_type = 'PREVENTIVE MAINT'
-					AND p.pm_group IN (
+					AND (p.pm_group IN (
 						'BASEMENT INSPECT',
 						'BLDG INSPECTION',
 						'ELEVATOR TEST',
@@ -75,7 +75,7 @@ GO
 						'SEMI ANNUAL',
 						'UTILITY ROOMS'
 					)
-					OR p.pm_group IS NULL
+					OR p.pm_group IS NULL)
 				) THEN 'PREVENTIVE_GENERAL'
 				WHEN prob_type IN ('HVAC|PM', 'HVAC|INSPECTION')
 				OR (
@@ -124,7 +124,7 @@ GO
 			LEFT JOIN afm.pms p ON r.pms_id = p.pms_id
 		WHERE
 			prob_type IS NOT NULL
-			AND prob_type != 'TEST (DO NOT USE)'
+			AND prob_type NOT IN ('TEST (DO NOT USE)', 'TEST(DO NOT USE)')
 	);
 
 GO
@@ -250,11 +250,11 @@ SELECT
 	END AS is_on_time,
 	unfinished_but_late,
 	CASE
-		WHEN primary_type IN ('PREVENTIVE_HVAC') THEN CAST(1 AS DECIMAL)
+		WHEN primary_type IN ('PREVENTIVE_HVAC') OR pm_group IN ('ELEVATOR TEST') THEN CAST(1 AS DECIMAL)
 		ELSE CAST(0 AS DECIMAL)
 	END AS is_ratio_pm,
 	CASE
-		WHEN primary_type IN ('HVAC') THEN CAST(1 AS DECIMAL)
+		WHEN primary_type IN ('HVAC', 'ELEVATOR') THEN CAST(1 AS DECIMAL)
 		ELSE CAST(0 AS DECIMAL)
 	END AS is_ratio_cm,
 	CASE
@@ -293,7 +293,7 @@ GO
         FROM
             [afm].[dash_kpis]
         WHERE
-            primary_type NOT IN ('PREVENTIVE_GENERAL', 'PREVENTIVE_HVAC')
+            is_any_pm = 0
             AND primary_type != 'SMALL_TYPES_DISCARD'
         GROUP BY
             calendar_month_close
@@ -311,7 +311,21 @@ GO
         FROM
             [afm].[dash_kpis]
         WHERE
-            primary_type IN ('PREVENTIVE_GENERAL', 'PREVENTIVE_HVAC')
+            is_any_pm = 1
+        GROUP BY
+            calendar_month_close
+    );
+GO
+	DROP VIEW if exists [afm].[dash_pm_cm_ratio];
+GO
+	CREATE VIEW [afm].[dash_pm_cm_ratio] 
+	AS (
+        SELECT
+            calendar_month_close,
+            SUM(is_ratio_pm) * 100 / sum(is_ratio_cm) AS pm_cm_ratio,
+            (SUM(is_ratio_cm) + SUM(is_ratio_pm)) AS pm_cm_volume
+        FROM
+            [afm].[dash_kpis]
         GROUP BY
             calendar_month_close
     );
