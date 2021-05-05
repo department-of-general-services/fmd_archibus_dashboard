@@ -274,9 +274,7 @@ GO
 	DROP VIEW if exists [afm].[dash_cms_on_time];
 GO
 	CREATE VIEW [afm].[dash_cms_on_time] 
-	AS 
-	WITH grouped_by_month 
-AS (
+	AS (
         SELECT
             calendar_month_close,
             SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
@@ -299,15 +297,34 @@ AS (
             )
         GROUP BY
             calendar_month_close
-    )
-SELECT
-    *,
-    wr_volume * 100 / (
+			);
+
+
+GO
+	DROP VIEW if exists [afm].[dash_pms_on_time];
+GO
+	CREATE VIEW [afm].[dash_pms_on_time] 
+	AS (
         SELECT
-            MAX(wr_volume)
+            calendar_month_close,
+            SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
+            CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
+            SUM(is_on_time) as count_on_time
         FROM
-            grouped_by_month
-    ) AS normed_volume
-FROM
-    grouped_by_month
+            [afm].[dash_kpis]
+        WHERE
+            primary_type IN ('PREVENTIVE_GENERAL', 'PREVENTIVE_HVAC')
+            AND date_closed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
+            AND date_closed < dateAdd(
+                MS,
+                -3,
+                DateAdd(
+                    MM,
+                    DateDiff(MM, 0, DateAdd(month, -1, getDate())),
+                    0
+                )
+            )
+        GROUP BY
+            calendar_month_close
+    );
 GO

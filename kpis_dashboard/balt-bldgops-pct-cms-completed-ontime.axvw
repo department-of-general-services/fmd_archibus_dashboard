@@ -7,10 +7,9 @@
             calendar_month_close,
             percent_ontime,
             wr_volume,
-            count_on_time, 
-            normed_volume
-            FROM
-                dash_cms_on_time
+            count_on_time
+        FROM
+            dash_cms_on_time
         </sql>
 
         <table name="wrhwr"
@@ -21,7 +20,7 @@
         <field name="percent_ontime"
             dataType="number"
             decimals="1" />
-        <field name="normed_volume"
+        <field name="wr_volume"
             dataType="number"
             decimals="0" />
         <sortField name="calendar_month_close"
@@ -51,17 +50,18 @@
 
         <dataAxis dataSource="ds_pct_cms_ontime"
             table="wrhwr"
-            field="normed_volume"
-            showLabel="false"
-            displayAxis="false">
-            <title>Normalized monthly volume</title>
+            field="wr_volume"
+            showLabel="true"
+            displayAxis="true">
+            <title>Requests Closed</title>
         </dataAxis>
 
         <dataAxis dataSource="ds_pct_cms_ontime"
             table="wrhwr"
             type="line"
             field="percent_ontime"
-            showLabel="true">
+            showLabel="true"
+             displayAxis="true">
             <title>% On-Time</title>
         </dataAxis>
 
