@@ -1,9 +1,9 @@
 <view version="2.0">
-	<title>Backlog Detail</title>
+	<title>Divisional KPIs Detail</title>
 
 	<layout id="main">
 		<west split="true"
-			initialSize="30%" />
+			initialSize="40%" />
 		<center />
 	</layout>
 
@@ -21,7 +21,7 @@
 		containingLayout="main"
 		region="center">
 		<north split="true"
-			initialSize="42%" />
+			initialSize="50%" />
 		<center />
 	</layout>
 
@@ -33,13 +33,7 @@
 
 	<panel id="aging_by_trade"
 		type="view"
-		file="balt-bldgops-bar-aging-backlog-by-trade.axvw"
-		layout="nested_west"
-		region="center" />
-
-	<panel id="metric_chart"
-		type="view"
-		file="balt-bldgops-bar-work-request-volume-backlog.axvw"
+		file="balt-bldgops-pm-cm-ratio.axvw"
 		layout="nested_west"
 		region="south" />
 
