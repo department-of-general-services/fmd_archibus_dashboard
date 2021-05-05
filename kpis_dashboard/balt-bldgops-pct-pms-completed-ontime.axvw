@@ -3,53 +3,13 @@
 
     <dataSource id="ds_pct_pms_ontime">
         <sql dialect="sqlserver">
-		SELECT
-			calendar_month_close,
-			SUM(is_on_time) * 100 / COUNT(*) as percent_ontime,
-			COUNT(*) / 10 as wr_volume,
-			SUM(is_on_time) as count_on_time
-		FROM
-			(
-				SELECT
-					calendar_month_close,
-					date_completed,
-					primary_type,
-					unfinished_but_late,
-					CASE
-						WHEN days_to_completion &lt;= benchmark THEN CAST(1 AS DECIMAL)
-						WHEN unfinished_but_late = 1 THEN CAST(0 AS DECIMAL)
-						ELSE CAST(0 AS DECIMAL)
-					END AS is_on_time
-				FROM
-					(
-						SELECT
-							*,
-							CASE
-								WHEN (
-									date_completed IS NULL
-									AND days_open &lt; benchmark
-								) then CAST(1 AS DECIMAL)
-								ELSE CAST(0 AS DECIMAL)
-							END AS unfinished_but_late
-						FROM
-							(SELECT * 
-							FROM dash_benchmarks
-								WHERE
-									primary_type IN ('PREVENTIVE_GENERAL', 'PREVENTIVE_HVAC')
-									AND date_closed &gt;= DateAdd(month, -13, DateAdd(year, -2, getDate()))
-										AND date_closed &lt; dateAdd(
-											MS,
-											-3,
-											DateAdd(MM, DateDiff(MM, 0, DateAdd(year, -2, getDate())), 0)
-										)
-							) AS filtered_benchmarks
-					) AS catch_unfinished
-			) AS is_on_time
-		WHERE
-			date_completed IS NOT NULL
-			OR unfinished_but_late = 1
-		GROUP BY
-			calendar_month_close
+        SELECT
+            calendar_month_close,
+            percent_ontime,
+            wr_volume,
+            count_on_time
+        FROM
+            dash_pms_on_time
         </sql>
 
         <table name="wrhwr"
@@ -90,17 +50,19 @@
 
         <dataAxis dataSource="ds_pct_pms_ontime"
             table="wrhwr"
-            field="percent_ontime"
-            showLabel="true">
-            <title>% On-Time</title>
+            field="wr_volume"
+            showLabel="true"
+            displayAxis="true">
+            <title>Requests Closed</title>
         </dataAxis>
 
         <dataAxis dataSource="ds_pct_pms_ontime"
-            type="line"
             table="wrhwr"
-            field="wr_volume"
-            showLabel="true">
-            <title>Count of work requests</title>
+            type="line"
+            field="percent_ontime"
+            showLabel="true"
+            displayAxis="true">
+            <title>% On-Time</title>
         </dataAxis>
     </panel>
 </view>
