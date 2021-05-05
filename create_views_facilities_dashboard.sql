@@ -6,22 +6,20 @@ GO
 SET
 	QUOTED_IDENTIFIER ON
 GO
-DROP VIEW if exists [afm].[dash_cmu_problem_types]
+	DROP VIEW if exists [afm].[dash_cmu_problem_types]
 GO
-CREATE VIEW [afm].[dash_cmu_problem_types]
-AS
-	(
-	SELECT
-		wr_id,
-		r.status,
-		r.description,
-		r.supervisor,
-		date_requested,
-		date_completed,
-		date_closed,
-		prob_type AS problem_type,
-		p.pm_group AS pm_group,
-		CASE
+	CREATE VIEW [afm].[dash_cmu_problem_types] AS (
+		SELECT
+			wr_id,
+			r.status,
+			r.description,
+			r.supervisor,
+			date_requested,
+			date_completed,
+			date_closed,
+			prob_type AS problem_type,
+			p.pm_group AS pm_group,
+			CASE
 				WHEN prob_type = 'AIR QUALITY' THEN 'AIR QUALITY'
 				WHEN prob_type = 'APPLIANCE' THEN 'APPLIANCE'
 				WHEN prob_type = 'BOILER' THEN 'HVAC'
@@ -37,12 +35,12 @@ AS
 				WHEN prob_type = 'DUCT CLEANING' THEN 'DUCT CLEANING'
 				WHEN (
 					prob_type LIKE 'ELEC%'
-			OR prob_type = 'OUTLETS'
+					OR prob_type = 'OUTLETS'
 				) THEN 'ELECTRICAL'
 				WHEN prob_type = 'ELEVATOR' THEN 'ELEVATOR'
 				WHEN (
 					prob_type LIKE 'ENVIR%'
-			OR prob_type = 'ASBESTOS'
+					OR prob_type = 'ASBESTOS'
 				) THEN 'ENVIRONMENTAL'
 				WHEN prob_type = 'FENCE_GATE' THEN 'FENCE GATE'
 				WHEN prob_type = 'FIRE SUPPRESSION-PROTECTION' THEN 'FIRE SUPPRESSION-PROTECTION'
@@ -62,9 +60,9 @@ AS
 					'INSPECTION',
 					'FUEL INSPECTION'
 				)
-			OR (
+				OR (
 					prob_type = 'PREVENTIVE MAINT'
-			AND p.pm_group IN (
+					AND p.pm_group IN (
 						'BASEMENT INSPECT',
 						'BLDG INSPECTION',
 						'ELEVATOR TEST',
@@ -78,9 +76,9 @@ AS
 					)
 				) THEN 'PREVENTIVE_GENERAL'
 				WHEN prob_type IN ('HVAC|PM', 'HVAC|INSPECTION')
-			OR (
+				OR (
 					prob_type = 'PREVENTIVE MAINT'
-			AND p.pm_group IN (
+					AND p.pm_group IN (
 						'HEAT CHECK TEST',
 						'HEATING LEVELS',
 						'HVAC INSPECTION',
@@ -93,11 +91,11 @@ AS
 				WHEN prob_type LIKE 'PLUMB%' THEN 'PLUMBING'
 				WHEN (
 					prob_type IN ('OTHER', 'RAMPS', 'STEPS', 'RAILSTAIRSRAMP')
-			AND u.role_name LIKE 'GATEKEEPER%'
+					AND u.role_name LIKE 'GATEKEEPER%'
 				) THEN 'OTHER-EXTERNAL'
 				WHEN (
 					prob_type IN ('OTHER', 'RAMPS', 'STEPS', 'RAILSTAIRSRAMP')
-			AND u.role_name NOT LIKE 'GATEKEEPER%'
+					AND u.role_name NOT LIKE 'GATEKEEPER%'
 				) THEN 'OTHER-INTERNAL'
 				WHEN prob_type = 'ROOF' THEN 'ROOF'
 				WHEN prob_type LIKE 'SECURITY SYSTEMS%' THEN 'SECURITY SYTEMS'
@@ -106,65 +104,64 @@ AS
 				WHEN prob_type = 'WINDOW' THEN 'WINDOW'
 				ELSE 'SMALL_TYPES_DISCARD'
 			END AS primary_type,
-		u.role_name,
-		b.name AS building_name,
-		b.bl_id AS b_number,
-		CASE
+			u.role_name,
+			b.name AS building_name,
+			b.bl_id AS b_number,
+			CASE
 				WHEN datepart(mm, date_requested) >= 7 THEN datepart(yy, date_requested) + 1
 				ELSE datepart(yy, date_requested)
 			END AS 'fy_request',
-		CASE
+			CASE
 				WHEN datepart(mm, date_closed) >= 7 THEN datepart(yy, date_closed) + 1
 				ELSE datepart(yy, date_closed)
 			END AS 'fy_close'
-	FROM
-		afm.wrhwr r
-		LEFT JOIN afm.afm_users u ON r.requestor = u.user_name
-		LEFT JOIN afm.bl b ON r.bl_id = b.bl_id
-		LEFT JOIN afm.pms p ON r.pms_id = p.pms_id
-	WHERE
+		FROM
+			afm.wrhwr r
+			LEFT JOIN afm.afm_users u ON r.requestor = u.user_name
+			LEFT JOIN afm.bl b ON r.bl_id = b.bl_id
+			LEFT JOIN afm.pms p ON r.pms_id = p.pms_id
+		WHERE
 			prob_type IS NOT NULL
-		AND prob_type != 'TEST (DO NOT USE)'
+			AND prob_type != 'TEST (DO NOT USE)'
 	);
 
 GO
-DROP VIEW if exists [afm].[dash_benchmarks]
+	DROP VIEW if exists [afm].[dash_benchmarks]
 GO
-CREATE VIEW [afm].[dash_benchmarks]
-AS
-	(
-	SELECT
-		wr_id,
-		status,
-		description,
-		supervisor,
-		date_completed,
-		date_requested,
-		date_closed,
-		fy_request,
-		role_name,
-		building_name,
-		b_number,
-		primary_type,
-		problem_type,
-		pm_group,
-		CONVERT(
+	CREATE VIEW [afm].[dash_benchmarks] AS (
+		SELECT
+			wr_id,
+			status,
+			description,
+			supervisor,
+			date_completed,
+			date_requested,
+			date_closed,
+			fy_request,
+			fy_close,
+			role_name,
+			building_name,
+			b_number,
+			primary_type,
+			problem_type,
+			pm_group,
+			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_requested), 0),
 				120
 			) AS calendar_month_request,
-		CONVERT(
+			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_closed), 0),
 				120
 			) AS calendar_month_close,
-		DATEDIFF(day, date_requested, date_completed) AS days_to_completion,
-		DATEDIFF(
+			DATEDIFF(day, date_requested, date_completed) AS days_to_completion,
+			DATEDIFF(
 				day,
 				date_requested,
 				DateAdd(year, - 2, getDate())
 			) AS days_open,
-		CASE
+			CASE
 				WHEN primary_type IN (
 					'BUILDING',
 					'DELIVERY',
@@ -203,18 +200,67 @@ AS
 				) THEN 45
 				WHEN primary_type IN ('DESIGN', 'ROOF', 'DUCT CLEANING') THEN 60
 			END AS benchmark
-	FROM
-		afm.dash_cmu_problem_types
+		FROM
+			afm.dash_cmu_problem_types
 	);
 
 GO
-DROP VIEW if exists [afm].[dash_backlog]
+	DROP VIEW if exists [afm].[dash_kpis]
 GO
-CREATE VIEW [afm].[dash_backlog]
-AS
-	(
-	SELECT *
-	FROM afm.dash_benchmarks b
-	WHERE b.status NOT IN ('Clo', 'Can', 'Rej', 'R')
-		AND days_open >= 90
-	);
+	CREATE VIEW [afm].[dash_kpis] 
+	AS 
+	WITH catch_unfinished_but_late
+	/*This query allows us to account for work that hasn't been 
+	 completed yet, but is already past the benchmark.*/
+	AS (
+		SELECT
+			*,
+			CASE
+				WHEN (
+					date_completed IS NULL
+					AND days_open > benchmark
+				) THEN CAST(1 AS DECIMAL)
+				ELSE CAST(0 AS DECIMAL)
+			END AS unfinished_but_late
+		FROM
+			[afm].[dash_benchmarks]
+	)
+SELECT
+	wr_id,
+	calendar_month_close,
+	calendar_month_request,
+	fy_close,
+	fy_request,
+	primary_type,
+	problem_type,
+	supervisor,
+	c.status,
+	b_number,
+	c.description,
+	CASE
+		WHEN days_to_completion <= benchmark THEN CAST(1 AS DECIMAL)
+		WHEN unfinished_but_late = 1 THEN CAST(0 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
+	END AS is_on_time,
+	unfinished_but_late,
+	CASE
+		WHEN primary_type IN ('PREVENTIVE_HVAC') THEN 1
+		ELSE 0
+	END AS is_ratio_pm,
+	CASE
+		WHEN primary_type IN ('HVAC') THEN 1
+		ELSE 0
+	END AS is_ratio_cm,
+	CASE
+		WHEN primary_type IN ('PREVENTIVE_HVAC', 'PREVENTIVE_GENERAL') THEN 1
+		ELSE 0
+	END AS is_any_pm
+FROM
+	catch_unfinished_but_late c
+WHERE
+	/*For the KPIs table, we're only interested in jobs that we
+	 can label as on time or not. So we must throw away the jobs 
+	 that are still in process and could be on time.*/
+	date_completed IS NOT NULL
+	OR unfinished_but_late = 1
+GO
