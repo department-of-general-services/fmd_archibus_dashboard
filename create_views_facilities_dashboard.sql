@@ -264,11 +264,21 @@ SELECT
 FROM
 	catch_unfinished_but_late c
 WHERE
+	date_closed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
+    AND date_closed < dateAdd(
+                MS,
+                -3,
+                DateAdd(
+                    MM,
+                    DateDiff(MM, 0, DateAdd(month, -1, getDate())),
+                    0
+                )
+            )
 	/*For the KPIs table, we're only interested in jobs that we
 	 can label as on time or not. So we must throw away the jobs 
 	 that are still in process and could be on time.*/
-	date_completed IS NOT NULL
-	OR unfinished_but_late = 1
+	AND (date_completed IS NOT NULL
+	OR unfinished_but_late = 1);
 
 GO
 	DROP VIEW if exists [afm].[dash_cms_on_time];
@@ -285,21 +295,9 @@ GO
         WHERE
             primary_type NOT IN ('PREVENTIVE_GENERAL', 'PREVENTIVE_HVAC')
             AND primary_type != 'SMALL_TYPES_DISCARD'
-            AND date_closed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
-            AND date_closed < dateAdd(
-                MS,
-                -3,
-                DateAdd(
-                    MM,
-                    DateDiff(MM, 0, DateAdd(month, -1, getDate())),
-                    0
-                )
-            )
         GROUP BY
             calendar_month_close
 			);
-
-
 GO
 	DROP VIEW if exists [afm].[dash_pms_on_time];
 GO
@@ -314,16 +312,6 @@ GO
             [afm].[dash_kpis]
         WHERE
             primary_type IN ('PREVENTIVE_GENERAL', 'PREVENTIVE_HVAC')
-            AND date_closed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
-            AND date_closed < dateAdd(
-                MS,
-                -3,
-                DateAdd(
-                    MM,
-                    DateDiff(MM, 0, DateAdd(month, -1, getDate())),
-                    0
-                )
-            )
         GROUP BY
             calendar_month_close
     );
