@@ -33,7 +33,7 @@
         showLegendOnLoad="false"
         showLegendAsPopUp="false"
         legendLocation="bottom"
-        unitPrecision="2"
+        unitPrecision="0"
         showUnitPrefixes="true"
         showDataTips="true"
         backgroundColor="0xc6e2ff">
@@ -49,14 +49,20 @@
 
         <dataAxis dataSource="ds_pm_cm_ratio"
             table="wrhwr"
+            field="pm_cm_volume"
+            showLabel="true"
+            displayAxis="true">
+            <title>Work Requests Closed</title>
+        </dataAxis>
+
+        <dataAxis dataSource="ds_pm_cm_ratio"
+            table="wrhwr"
             type="line"
             field="pm_cm_ratio"
             showLabel="true"
             displayAxis="true">
             <title>PM:CM Ratio</title>
         </dataAxis>
-
-
 
     </panel>
 </view>

@@ -250,11 +250,11 @@ SELECT
 	END AS is_on_time,
 	unfinished_but_late,
 	CASE
-		WHEN primary_type IN ('PREVENTIVE_HVAC') OR pm_group IN ('ELEVATOR TEST') THEN CAST(1 AS DECIMAL)
+		WHEN primary_type IN ('PREVENTIVE_HVAC') THEN CAST(1 AS DECIMAL)
 		ELSE CAST(0 AS DECIMAL)
 	END AS is_ratio_pm,
 	CASE
-		WHEN primary_type IN ('HVAC', 'ELEVATOR') THEN CAST(1 AS DECIMAL)
+		WHEN primary_type IN ('HVAC') THEN CAST(1 AS DECIMAL)
 		ELSE CAST(0 AS DECIMAL)
 	END AS is_ratio_cm,
 	CASE
@@ -322,7 +322,9 @@ GO
 	AS (
         SELECT
             calendar_month_close,
-            SUM(is_ratio_pm) * 100 / sum(is_ratio_cm) AS pm_cm_ratio,
+            CAST(SUM(is_ratio_pm) * 100 AS DECIMAL) / CAST(SUM(is_ratio_cm) AS DECIMAL) AS pm_cm_ratio,
+			SUM(is_ratio_pm) AS pm_volume,
+			SUM(is_ratio_cm) AS cm_volume,
             (SUM(is_ratio_cm) + SUM(is_ratio_pm)) AS pm_cm_volume
         FROM
             [afm].[dash_kpis]
