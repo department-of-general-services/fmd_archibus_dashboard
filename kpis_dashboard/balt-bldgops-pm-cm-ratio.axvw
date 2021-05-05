@@ -1,0 +1,62 @@
+<view version="2.0">
+    <!-- <title>Volume Received per Month</title> -->
+
+    <dataSource id="ds_pm_cm_ratio">
+        <sql dialect="sqlserver">
+        SELECT
+            calendar_month_close,
+            pm_cm_ratio,
+            pm_cm_volume
+        FROM
+            dash_pm_cm_ratio
+        </sql>
+
+        <table name="wrhwr"
+            role="main" />
+        <field name="calendar_month_close"
+            dataType="text"
+            size="7"/>
+        <field name="pm_cm_ratio"
+            dataType="number"
+            decimals="2" />
+        <field name="pm_cm_volume"
+            dataType="number"
+            decimals="0" />
+        <sortField name="calendar_month_close"
+            table="wrhwr"/>
+    </dataSource>
+
+    <panel id="pm_cm_ratio"
+        type="htmlChart"
+        controlType="columnLineChart"
+        dataSource="ds_pm_cm_ratio"
+        showLegendOnLoad="false"
+        showLegendAsPopUp="false"
+        legendLocation="bottom"
+        unitPrecision="2"
+        showUnitPrefixes="true"
+        showDataTips="true"
+        backgroundColor="0xc6e2ff">
+        <title>PM:CM Ratio</title>
+
+        <groupingAxis dataSource="ds_pm_cm_ratio"
+            table="wrhwr"
+            field="calendar_month_close"
+            showLabel="true"
+            labelRotation="0">
+            <title>Month</title>
+        </groupingAxis>
+
+        <dataAxis dataSource="ds_pm_cm_ratio"
+            table="wrhwr"
+            type="line"
+            field="pm_cm_ratio"
+            showLabel="true"
+            displayAxis="true">
+            <title>PM:CM Ratio</title>
+        </dataAxis>
+
+
+
+    </panel>
+</view>
