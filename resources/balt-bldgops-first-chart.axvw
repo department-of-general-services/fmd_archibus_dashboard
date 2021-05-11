@@ -1,0 +1,45 @@
+<view version="2.0">
+    <!-- This is a comment -->
+    <title>Hello world</title>
+
+    <dataSource id="ds_first_chart">
+        <!-- The SQL query below says to select the specified columns of a table
+		between the date 2 years ago and 30 days before that. -->
+        <sql dialect="sqlserver">
+			SELECT primary_type, 
+                count(wr_id) as wr_volume
+			FROM dash_benchmarks
+			WHERE primary_type IS NOT NULL 
+                AND date_requested &gt;= DateAdd(day, -30, DateAdd(year, -2, getDate()))
+			    AND date_requested &lt; DateAdd(year, -2, getDate())
+		    GROUP BY primary_type
+            HAVING count(wr_id) > 10
+        </sql>
+        <table name="wrhwr"
+            role="main" />
+        <field name="primary_type"
+            dataType="text"/>
+        <field name="wr_volume"
+            dataType="number"
+            decimals='0'  />
+            <sortField name="primary_type" table="wrhwr"/>
+    </dataSource>
+
+    <panel id="first_chart"
+        type="htmlChart"
+        controlType="columnChart"
+        dataSource="ds_first_chart">
+        <title>Number of Work Requests By Month</title>
+
+        <groupingAxis table="wrhwr"
+            field="primary_type">
+            <title>Month</title>
+        </groupingAxis>
+
+        <dataAxis table="wrhwr"
+            field="wr_volume">
+            <title> Number of work request closed</title>
+        </dataAxis>
+
+    </panel>
+</view>

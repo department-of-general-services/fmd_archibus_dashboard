@@ -1,0 +1,68 @@
+<view version="2.0">
+    <!-- <title></title> -->
+
+    <dataSource id="ds_pct_pms_ontime">
+        <sql dialect="sqlserver">
+        SELECT
+            calendar_month_close,
+            percent_ontime,
+            wr_volume,
+            count_on_time
+        FROM
+            dash_pms_on_time
+        </sql>
+
+        <table name="wrhwr"
+            role="main" />
+        <field name="calendar_month_close"
+            dataType="text"
+            size="7"/>
+        <field name="wr_volume"
+            dataType="number"
+            decimals="0" />
+        <field name="percent_ontime"
+            dataType="number"
+            decimals="1" />
+        <sortField name="calendar_month_close"
+            table="wrhwr"/>
+    </dataSource>
+
+    <panel id="pct_pms_ontime"
+        type="htmlChart"
+        controlType="columnLineChart"
+        dataSource="ds_pct_pms_ontime"
+        showLegendOnLoad="false"
+        showLegendAsPopUp="false"
+        legendLocation="bottom"
+        unitPrecision="0"
+        showUnitPrefixes="true"
+        showDataTips="true"
+        backgroundColor="0xc6e2ff">
+        <title>Percentage of PMs Completed On Time</title>
+
+        <groupingAxis dataSource="ds_pct_pms_ontime"
+            table="wrhwr"
+            field="calendar_month_close"
+            showLabel="true"
+            labelRotation="0">
+            <title>Month</title>
+        </groupingAxis>
+
+        <dataAxis dataSource="ds_pct_pms_ontime"
+            table="wrhwr"
+            field="wr_volume"
+            showLabel="true"
+            displayAxis="true">
+            <title>Requests Closed</title>
+        </dataAxis>
+
+        <dataAxis dataSource="ds_pct_pms_ontime"
+            table="wrhwr"
+            type="line"
+            field="percent_ontime"
+            showLabel="true"
+            displayAxis="true">
+            <title>% On-Time</title>
+        </dataAxis>
+    </panel>
+</view>

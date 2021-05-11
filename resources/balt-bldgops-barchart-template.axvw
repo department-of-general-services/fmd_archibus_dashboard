@@ -1,5 +1,5 @@
 <view version="2.0">
-	<!-- <title>Volume Received per Month</title> -->
+	<!-- <title>Monthly chart template</title> -->
 
 	<dataSource id="ds_monthly_pct_ontime">
 		<sql dialect="sqlserver">
@@ -61,7 +61,8 @@
 		<field name="percent_ontime"
 			dataType="number"
 			decimals="1" />
-		<sortField name="calendar_month_close" table="wrhwr"/>
+		<sortField name="calendar_month_close"
+			table="wrhwr"/>
 	</dataSource>
 
 	<panel id="monthly_pct_ontime"
@@ -72,7 +73,7 @@
 		showLegendAsPopUp="false"
 		legendLocation="bottom"
 		unitPrecision="0"
-        showUnitPrefixes="true"
+		showUnitPrefixes="true"
 		showDataTips="true"
 		backgroundColor="0xc6e2ff">
 		<title>Percentage of CMs Completed On Time</title>

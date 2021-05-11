@@ -17,8 +17,8 @@
 					problem_type,
 					building_name
 			FROM dash_benchmarks
-			WHERE date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+			WHERE date_requested &gt;= DateAdd(day, -30,  DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 			UNION
 			SELECT '30 Days' AS timespan, 
 				   'Backlog' AS action,
@@ -30,8 +30,8 @@
 					building_name
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
-				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 			UNION
 			SELECT '60 Days' AS timespan, 
 					'Opened' AS action,
@@ -42,8 +42,8 @@
 					problem_type,
 					building_name
 			FROM dash_benchmarks
-			WHERE date_requested &gt;= DateAdd(day, -60, DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+			WHERE date_requested &gt;= DateAdd(day, -60, DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 			UNION
 			SELECT '60 Days' AS timespan, 
 				   'Backlog' AS action,
@@ -55,8 +55,8 @@
 					building_name
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
-				AND date_requested &gt;= DateAdd(day, -60,  DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+				AND date_requested &gt;= DateAdd(day, -60,  DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 			UNION
 			SELECT '90 Days' AS timespan, 
 					'Opened' as action,
@@ -67,8 +67,8 @@
 					problem_type,
 					building_name
 			FROM dash_benchmarks
-			WHERE date_requested &gt;= DateAdd(day, -90, DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+			WHERE date_requested &gt;= DateAdd(day, -90, DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 			UNION
 			SELECT '90 Days' AS timespan, 
 					'Backlog' as action,
@@ -80,8 +80,8 @@
 					building_name
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
-				AND date_requested &gt;= DateAdd(day, -90,  DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+				AND date_requested &gt;= DateAdd(day, -90,  DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 		) benchmarks
 			WHERE timespan = ${parameters['summaryTimespan']}
 			AND action = ${parameters['summaryAction']}
@@ -121,16 +121,16 @@
 					'Opened' AS action,
 			        COUNT(*) as count_wr
 			FROM dash_benchmarks
-			WHERE date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+			WHERE date_requested &gt;= DateAdd(day, -30,  DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 			UNION
 			SELECT '30 Days' AS timespan, 
 				   'Backlog' AS action,
 			        COUNT(*) as count_wr
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
-				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 
 			UNION
 
@@ -138,16 +138,16 @@
 					'Opened' AS action,
 			        COUNT(*) as count_wr
 			FROM dash_benchmarks
-			WHERE date_requested &gt;= DateAdd(day, -60, DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+			WHERE date_requested &gt;= DateAdd(day, -60, DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 			UNION
 			SELECT '60 Days' AS timespan, 
 				   'Backlog' AS action,
 			        COUNT(*) as count_wr
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
-				AND date_requested &gt;= DateAdd(day, -60,  DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+				AND date_requested &gt;= DateAdd(day, -60,  DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 
 			UNION
 			
@@ -156,16 +156,16 @@
 			        COUNT(*) as count_wr
 			FROM dash_benchmarks
 			WHERE problem_type != 'TEST(DO NOT USE)'
-				AND date_requested &gt;= DateAdd(day, -90, DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+				AND date_requested &gt;= DateAdd(day, -90, DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 			UNION
 			SELECT '90 Days' AS timespan, 
 					'Backlog' as action,
 			        COUNT(*) as count_wr
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
-				AND date_requested &gt;= DateAdd(day, -90,  DateAdd(year, -2, getDate()))
-				AND date_requested &lt;  DateAdd(year, -2, getDate())
+				AND date_requested &gt;= DateAdd(day, -90,  DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(month, -1, getDate())
 		) benchmarks
 			WHERE timespan = ${parameters['summaryValueForThisGroup']}
 		</sql>

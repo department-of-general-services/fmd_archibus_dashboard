@@ -22,8 +22,7 @@ def loop_through_axvw_and_js(prod_dir, to_replace, replace_with):
 
 
 def loop_through_axvw(prod_dir, to_replace, replace_with):
-    pass
-    for file_path in Path.cwd().glob('*.axvw'):
+    for file_path in prod_dir.glob('*.axvw'):
         print(file_path.name)
         with open(file_path, "r") as f:
             axvw_text = f.read()
@@ -34,7 +33,7 @@ def loop_through_axvw(prod_dir, to_replace, replace_with):
 
 
 if __name__ == '__main__':
-    prod_dir = Path.cwd()
-    to_replace = re.escape("getDate()")
-    replace_with = r"DateAdd(year, -2, getDate())"
+    prod_dir = Path.cwd() / "kpis_dashboard"
+    to_replace = re.escape("DateAdd(year, -2, getDate())")
+    replace_with = r"DateAdd(month, -1, getDate())"
     loop_through_axvw(prod_dir, to_replace, replace_with)

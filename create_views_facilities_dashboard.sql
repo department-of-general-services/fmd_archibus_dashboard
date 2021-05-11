@@ -1,6 +1,5 @@
 USE [DGS_RAND_ARCHIBUS]
 GO
-	/****** Object:  View [afm].[dash_benchmarks]   Script Date: 1/11/2021 2:54:33 PM ******/
 SET
 	ANSI_NULLS ON
 GO
@@ -49,6 +48,7 @@ GO
 				WHEN prob_type = 'FLOOR' THEN 'FLOOR'
 				WHEN prob_type IN (
 					'HVAC|INFRASTRUCTURE',
+					'HVAC INFRASTRUCTURE',
 					'HVAC|HEATING OIL',
 					'HVAC|REPAIR',
 					'HVAC|REPLACEMENT',
@@ -63,7 +63,7 @@ GO
 				)
 				OR (
 					prob_type = 'PREVENTIVE MAINT'
-					AND p.pm_group IN (
+					AND (p.pm_group IN (
 						'BASEMENT INSPECT',
 						'BLDG INSPECTION',
 						'ELEVATOR TEST',
@@ -75,6 +75,7 @@ GO
 						'SEMI ANNUAL',
 						'UTILITY ROOMS'
 					)
+					OR p.pm_group IS NULL)
 				) THEN 'PREVENTIVE_GENERAL'
 				WHEN prob_type IN ('HVAC|PM', 'HVAC|INSPECTION')
 				OR (
@@ -122,8 +123,8 @@ GO
 			LEFT JOIN afm.bl b ON r.bl_id = b.bl_id
 			LEFT JOIN afm.pms p ON r.pms_id = p.pms_id
 		WHERE
-			prob_type IS NOT NULL --AND date_closed IS NOT NULL
-			AND prob_type != 'TEST (DO NOT USE)'
+			prob_type IS NOT NULL
+			AND prob_type NOT IN ('TEST (DO NOT USE)', 'TEST(DO NOT USE)')
 	);
 
 GO
@@ -139,6 +140,7 @@ GO
 			date_requested,
 			date_closed,
 			fy_request,
+			fy_close,
 			role_name,
 			building_name,
 			b_number,
@@ -204,4 +206,129 @@ GO
 			afm.dash_cmu_problem_types
 	);
 
+GO
+	DROP VIEW if exists [afm].[dash_kpis];
+GO
+	CREATE VIEW [afm].[dash_kpis] 
+	AS 
+	WITH catch_unfinished_but_late
+	/*This query allows us to account for work that hasn't been 
+	 completed yet, but is already past the benchmark.*/
+	AS (
+		SELECT
+			*,
+			CASE
+				WHEN (
+					date_completed IS NULL
+					AND days_open > benchmark
+				) THEN CAST(1 AS DECIMAL)
+				ELSE CAST(0 AS DECIMAL)
+			END AS unfinished_but_late
+		FROM
+			[afm].[dash_benchmarks]
+	)
+SELECT
+	wr_id,
+	calendar_month_close,
+	calendar_month_request,
+	date_requested,
+	date_completed,
+	date_closed,
+	fy_close,
+	fy_request,
+	primary_type,
+	problem_type,
+	supervisor,
+	c.status,
+	b_number,
+	c.description,
+	pm_group,
+	CASE
+		WHEN days_to_completion <= benchmark THEN CAST(1 AS DECIMAL)
+		WHEN unfinished_but_late = 1 THEN CAST(0 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
+	END AS is_on_time,
+	unfinished_but_late,
+	CASE
+		WHEN primary_type IN ('PREVENTIVE_HVAC') THEN CAST(1 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
+	END AS is_ratio_pm,
+	CASE
+		WHEN primary_type IN ('HVAC') THEN CAST(1 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
+	END AS is_ratio_cm,
+	CASE
+		WHEN primary_type IN ('PREVENTIVE_HVAC', 'PREVENTIVE_GENERAL') THEN CAST(1 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
+	END AS is_any_pm
+FROM
+	catch_unfinished_but_late c
+WHERE
+	date_closed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
+    AND date_closed < dateAdd(
+                MS,
+                -3,
+                DateAdd(
+                    MM,
+                    DateDiff(MM, 0, DateAdd(month, -1, getDate())),
+                    0
+                )
+            )
+	/*For the KPIs table, we're only interested in jobs that we
+	 can label as on time or not. So we must throw away the jobs 
+	 that are still in process and could be on time.*/
+	AND (date_completed IS NOT NULL
+	OR unfinished_but_late = 1);
+
+GO
+	DROP VIEW if exists [afm].[dash_cms_on_time];
+GO
+	CREATE VIEW [afm].[dash_cms_on_time] 
+	AS (
+        SELECT
+            calendar_month_close,
+            SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
+            CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
+            SUM(is_on_time) as count_on_time
+        FROM
+            [afm].[dash_kpis]
+        WHERE
+            is_any_pm = 0
+            AND primary_type != 'SMALL_TYPES_DISCARD'
+        GROUP BY
+            calendar_month_close
+			);
+GO
+	DROP VIEW if exists [afm].[dash_pms_on_time];
+GO
+	CREATE VIEW [afm].[dash_pms_on_time] 
+	AS (
+        SELECT
+            calendar_month_close,
+            SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
+            CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
+            SUM(is_on_time) as count_on_time
+        FROM
+            [afm].[dash_kpis]
+        WHERE
+            is_any_pm = 1
+        GROUP BY
+            calendar_month_close
+    );
+GO
+	DROP VIEW if exists [afm].[dash_pm_cm_ratio];
+GO
+	CREATE VIEW [afm].[dash_pm_cm_ratio] 
+	AS (
+        SELECT
+            calendar_month_close,
+            CAST(SUM(is_ratio_pm) * 100 AS DECIMAL) / CAST(SUM(is_ratio_cm) AS DECIMAL) AS pm_cm_ratio,
+			SUM(is_ratio_pm) AS pm_volume,
+			SUM(is_ratio_cm) AS cm_volume,
+            (SUM(is_ratio_cm) + SUM(is_ratio_pm)) AS pm_cm_volume
+        FROM
+            [afm].[dash_kpis]
+        GROUP BY
+            calendar_month_close
+    );
 GO
