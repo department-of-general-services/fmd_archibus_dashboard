@@ -63,19 +63,21 @@ GO
 				)
 				OR (
 					prob_type = 'PREVENTIVE MAINT'
-					AND (p.pm_group IN (
-						'BASEMENT INSPECT',
-						'BLDG INSPECTION',
-						'ELEVATOR TEST',
-						'EXTERMINATION',
-						'FLOOR BUFFING',
-						'FUEL TANK TEST',
-						'GENERATOR TEST',
-						'KITCHEN PM',
-						'SEMI ANNUAL',
-						'UTILITY ROOMS'
+					AND (
+						p.pm_group IN (
+							'BASEMENT INSPECT',
+							'BLDG INSPECTION',
+							'ELEVATOR TEST',
+							'EXTERMINATION',
+							'FLOOR BUFFING',
+							'FUEL TANK TEST',
+							'GENERATOR TEST',
+							'KITCHEN PM',
+							'SEMI ANNUAL',
+							'UTILITY ROOMS'
+						)
+						OR p.pm_group IS NULL
 					)
-					OR p.pm_group IS NULL)
 				) THEN 'PREVENTIVE_GENERAL'
 				WHEN prob_type IN ('HVAC|PM', 'HVAC|INSPECTION')
 				OR (
@@ -208,10 +210,9 @@ GO
 
 GO
 	DROP VIEW if exists [afm].[dash_kpis];
+
 GO
-	CREATE VIEW [afm].[dash_kpis] 
-	AS 
-	WITH catch_unfinished_but_late
+	CREATE VIEW [afm].[dash_kpis] AS WITH catch_unfinished_but_late
 	/*This query allows us to account for work that hasn't been 
 	 completed yet, but is already past the benchmark.*/
 	AS (
@@ -265,70 +266,75 @@ FROM
 	catch_unfinished_but_late c
 WHERE
 	date_closed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
-    AND date_closed < dateAdd(
-                MS,
-                -3,
-                DateAdd(
-                    MM,
-                    DateDiff(MM, 0, DateAdd(month, -1, getDate())),
-                    0
-                )
-            )
+	AND date_closed < dateAdd(
+		MS,
+		-3,
+		DateAdd(
+			MM,
+			DateDiff(MM, 0, DateAdd(month, -1, getDate())),
+			0
+		)
+	)
 	/*For the KPIs table, we're only interested in jobs that we
 	 can label as on time or not. So we must throw away the jobs 
 	 that are still in process and could be on time.*/
-	AND (date_completed IS NOT NULL
-	OR unfinished_but_late = 1);
+	AND (
+		date_completed IS NOT NULL
+		OR unfinished_but_late = 1
+	);
 
 GO
 	DROP VIEW if exists [afm].[dash_cms_on_time];
+
 GO
-	CREATE VIEW [afm].[dash_cms_on_time] 
-	AS (
-        SELECT
-            calendar_month_close,
-            SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
-            CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
-            SUM(is_on_time) as count_on_time
-        FROM
-            [afm].[dash_kpis]
-        WHERE
-            is_any_pm = 0
-            AND primary_type != 'SMALL_TYPES_DISCARD'
-        GROUP BY
-            calendar_month_close
-			);
+	CREATE VIEW [afm].[dash_cms_on_time] AS (
+		SELECT
+			calendar_month_close,
+			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
+			CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
+			SUM(is_on_time) as count_on_time
+		FROM
+			[afm].[dash_kpis]
+		WHERE
+			is_any_pm = 0
+			AND primary_type != 'SMALL_TYPES_DISCARD'
+		GROUP BY
+			calendar_month_close
+	);
+
 GO
 	DROP VIEW if exists [afm].[dash_pms_on_time];
+
 GO
-	CREATE VIEW [afm].[dash_pms_on_time] 
-	AS (
-        SELECT
-            calendar_month_close,
-            SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
-            CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
-            SUM(is_on_time) as count_on_time
-        FROM
-            [afm].[dash_kpis]
-        WHERE
-            is_any_pm = 1
-        GROUP BY
-            calendar_month_close
-    );
+	CREATE VIEW [afm].[dash_pms_on_time] AS (
+		SELECT
+			calendar_month_close,
+			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
+			CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
+			SUM(is_on_time) as count_on_time
+		FROM
+			[afm].[dash_kpis]
+		WHERE
+			is_any_pm = 1
+		GROUP BY
+			calendar_month_close
+	);
+
 GO
 	DROP VIEW if exists [afm].[dash_pm_cm_ratio];
+
 GO
-	CREATE VIEW [afm].[dash_pm_cm_ratio] 
-	AS (
-        SELECT
-            calendar_month_close,
-            CAST(SUM(is_ratio_pm) * 100 AS DECIMAL) / CAST(SUM(is_ratio_cm) AS DECIMAL) AS pm_cm_ratio,
+	CREATE VIEW [afm].[dash_pm_cm_ratio] AS (
+		SELECT
+			calendar_month_close,
+			CAST(SUM(is_ratio_pm) * 100 AS DECIMAL) / CAST(SUM(is_ratio_cm) AS DECIMAL) AS pm_cm_ratio,
 			SUM(is_ratio_pm) AS pm_volume,
 			SUM(is_ratio_cm) AS cm_volume,
-            (SUM(is_ratio_cm) + SUM(is_ratio_pm)) AS pm_cm_volume
-        FROM
-            [afm].[dash_kpis]
-        GROUP BY
-            calendar_month_close
-    );
+			(SUM(is_ratio_cm) + SUM(is_ratio_pm)) AS pm_cm_volume
+		FROM
+			[afm].[dash_kpis]
+		GROUP BY
+			calendar_month_close
+	);
+
 GO
