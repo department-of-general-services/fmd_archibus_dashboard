@@ -99,7 +99,7 @@ GO
 				) THEN 'OTHER-EXTERNAL'
 				WHEN (
 					prob_type IN ('OTHER', 'RAMPS', 'STEPS', 'RAILSTAIRSRAMP')
-					AND u.role_name NOT LIKE 'GATEKEEPER%'
+					AND (u.role_name NOT LIKE 'GATEKEEPER%' or u.role_name IS NULL)
 				) THEN 'OTHER-INTERNAL'
 				WHEN prob_type = 'ROOF' THEN 'ROOF'
 				WHEN prob_type LIKE 'SECURITY SYSTEMS%' THEN 'SECURITY SYTEMS'
@@ -126,7 +126,7 @@ GO
 			LEFT JOIN afm.pms p ON r.pms_id = p.pms_id
 		WHERE
 			prob_type IS NOT NULL
-			AND prob_type NOT IN ('TEST (DO NOT USE)', 'TEST(DO NOT USE)')
+			AND prob_type NOT IN ('TEST', 'TEST (DO NOT USE)', 'TEST(DO NOT USE)')
 	);
 
 GO
