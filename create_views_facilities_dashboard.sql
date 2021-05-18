@@ -99,7 +99,10 @@ GO
 				) THEN 'OTHER-EXTERNAL'
 				WHEN (
 					prob_type IN ('OTHER', 'RAMPS', 'STEPS', 'RAILSTAIRSRAMP')
-					AND (u.role_name NOT LIKE 'GATEKEEPER%' or u.role_name IS NULL)
+					AND (
+						u.role_name NOT LIKE 'GATEKEEPER%'
+						or u.role_name IS NULL
+					)
 				) THEN 'OTHER-INTERNAL'
 				WHEN prob_type = 'ROOF' THEN 'ROOF'
 				WHEN prob_type LIKE 'SECURITY SYSTEMS%' THEN 'SECURITY SYTEMS'
@@ -163,7 +166,7 @@ GO
 			DATEDIFF(
 				day,
 				date_requested,
-				DateAdd(year, - 2, getDate())
+				DateAdd(month, -1, getDate())
 			) AS days_open,
 			CASE
 				WHEN primary_type IN (
@@ -284,10 +287,10 @@ WHERE
 	);
 
 GO
-	DROP VIEW if exists [afm].[dash_cms_on_time];
+	DROP VIEW if exists [afm].[dash_cms_on_time_by_close];
 
 GO
-	CREATE VIEW [afm].[dash_cms_on_time] AS (
+	CREATE VIEW [afm].[dash_cms_on_time_by_close] AS (
 		SELECT
 			calendar_month_close,
 			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
@@ -303,10 +306,10 @@ GO
 	);
 
 GO
-	DROP VIEW if exists [afm].[dash_pms_on_time];
+	DROP VIEW if exists [afm].[dash_pms_on_time_by_close];
 
 GO
-	CREATE VIEW [afm].[dash_pms_on_time] AS (
+	CREATE VIEW [afm].[dash_pms_on_time_by_close] AS (
 		SELECT
 			calendar_month_close,
 			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
@@ -321,10 +324,10 @@ GO
 	);
 
 GO
-	DROP VIEW if exists [afm].[dash_pm_cm_ratio];
+	DROP VIEW if exists [afm].[dash_pm_cm_ratio_by_close];
 
 GO
-	CREATE VIEW [afm].[dash_pm_cm_ratio] AS (
+	CREATE VIEW [afm].[dash_pm_cm_ratio_by_close] AS (
 		SELECT
 			calendar_month_close,
 			CAST(SUM(is_ratio_pm) * 100 AS DECIMAL) / CAST(SUM(is_ratio_cm) AS DECIMAL) AS pm_cm_ratio,
@@ -338,3 +341,15 @@ GO
 	);
 
 GO
+	DROP VIEW if exists [afm].[dash_backlog];
+
+GO
+	CREATE VIEW [afm].[dash_backlog] AS (
+		SELECT
+			*
+		FROM
+			[afm].[dash_benchmarks]
+		WHERE
+			days_open > 30
+			AND status not in ('Clo', 'Can', 'Rej', 'R')
+	)
