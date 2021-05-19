@@ -1,0 +1,55 @@
+<view version="2.0">
+    <!-- <title>Volume Received per Month</title> -->
+
+    <dataSource id="ds_backlog_by_month">
+        <sql dialect="sqlserver">
+        SELECT 
+            calendar_month,
+            backlog
+        FROM
+            dash_backlog_by_month
+        WHERE 
+            month_start &gt;= DateAdd(month, -13, DateAdd(month, -1, getDate()))
+        </sql>
+        <table name="wrhwr"
+            role="main" />
+        <field name="calendar_month"
+            dataType="text"
+            size="7" />
+        <field name="backlog"
+            dataType="number"
+            decimals="0" />
+        <sortField name="calendar_month"
+            ascending="true"
+            table="wrhwr"/>
+    </dataSource>
+
+    <panel id="backlog_by_month"
+        type="htmlChart"
+        controlType="lineChart"
+        dataSource="ds_backlog_by_month"
+        showLegendOnLoad="false"
+        showLegendAsPopUp="false"
+        legendLocation="bottom"
+        unitPrecision="0"
+        showUnitPrefixes="true"
+        showDataTips="true"
+        backgroundColor="0xc6e2ff">
+        <title>Total Backlog Over Time</title>
+
+        <groupingAxis table="wrhwr"
+            field="calendar_month"
+            showLabel="true"
+            labelRotation="0">
+            <title>Calendar Month</title>
+        </groupingAxis>
+
+        <dataAxis table="wrhwr"
+            field="backlog"
+            showLabel="true"
+            displayAxis="true">
+            <title>Work Requests</title>
+        </dataAxis>
+
+    </panel>
+</view>

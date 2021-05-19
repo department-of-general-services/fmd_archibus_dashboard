@@ -1,5 +1,5 @@
 <view version="2.0">
-	<title>Divisional KPIs Detail</title>
+	<title>Divisional KPIs (Grouped By Date of Close)</title>
 
 	<layout id="main">
 		<west split="true"
@@ -11,9 +11,9 @@
 		containingLayout="main"
 		region="west">
 		<north split="true"
-			initialSize="15%" />
+			initialSize="22.5%" />
 		<south split="true"
-			initialSize="42%" />
+			initialSize="50%" />
 		<center />
 	</layout>
 
@@ -21,29 +21,35 @@
 		containingLayout="main"
 		region="center">
 		<north split="true"
-			initialSize="50%" />
+			initialSize="42%" />
 		<center />
 	</layout>
 
-	<panel id="metrics_list"
+	<panel id="ontime_kpis_current_fy_by_close"
 		type="view"
-		file="balt-bldgops-grid-workflow-last-30.axvw"
+		file="balt-bldgops-grid-ytd-ontime-kpis.axvw"
 		layout="nested_west"
 		region="north" />
 
-	<panel id="aging_by_trade"
+	<panel id="pm_cm_ratio_current_fy_by_close"
+		type="view"
+		file="balt-bldgops-grid-ytd-pm-cm-ratio.axvw"
+		layout="nested_west"
+		region="center" />
+
+	<panel id="pm_cm_ratio_by_month_closed"
 		type="view"
 		file="balt-bldgops-pm-cm-ratio.axvw"
 		layout="nested_west"
 		region="south" />
 
-	<panel id="pct_pms_closed_on_time"
+	<panel id="pct_pms_completed_on_time_by_month_closed"
 		type="view"
 		file="balt-bldgops-pct-pms-completed-ontime.axvw"
 		layout="nested_center"
 		region="north" />
 
-	<panel id="pct_cms_closed_on_time"
+	<panel id="pct_cms_completed_on_time_by_month_closed"
 		type="view"
 		file="balt-bldgops-pct-cms-completed-ontime.axvw"
 		layout="nested_center"

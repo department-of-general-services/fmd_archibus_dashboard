@@ -1,0 +1,53 @@
+<view version="2.0">
+    <!-- <title>Volume Received per Month</title> -->
+
+    <dataSource id="ds_backlog_by_status">
+        <sql dialect="sqlserver">
+        SELECT TOP 5
+            status,
+            count(wr_id) as backlog_volume
+        FROM
+            dash_backlog
+        GROUP BY 
+            status
+        ORDER BY 
+            backlog_volume desc
+        </sql>
+        <table name="wrhwr"
+            role="main" />
+        <field name="status"
+            dataType="text" />
+        <field name="backlog_volume"
+            dataType="number"
+            decimals="0" />
+        <sortField name="backlog_volume"
+            ascending="false"
+            table="wrhwr"/>
+    </dataSource>
+
+    <panel id="backlog_by_status"
+        type="htmlChart"
+        controlType="pieChart"
+        dataSource="ds_backlog_by_status"
+        showDataTips="true"
+        showLegendAsPopUp="false"
+        showLegendOnLoad="false"
+        unitPrecision="0">
+        <title>Backlog By Status (30+ Days)</title>
+
+        <groupingAxis table="wrhwr"
+            field="status"
+            showLabel="false"
+            labelRotation="45">
+            <title>status</title>
+        </groupingAxis>
+
+        <dataAxis table="wrhwr"
+            field="backlog_volume"
+            showLabel="false"
+            displayAxis="true">
+            <title>Work Requests</title>
+        </dataAxis>
+
+    </panel>
+</view>

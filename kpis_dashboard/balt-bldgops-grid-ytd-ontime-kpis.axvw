@@ -1,0 +1,70 @@
+<view version="2.0">
+	<!-- <title>Work Request Metrics</title> -->
+
+	<dataSource id="ds_ontime_kpis_by_close">
+		<sql dialect="sqlserver">
+		SELECT
+			'% Corrective Completed Ontime' AS label,
+			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
+			CAST(COUNT(wr_id) AS DECIMAL) as total_volume,
+			SUM(is_on_time) as ontime_volume
+		FROM
+			[afm].[dash_kpis]
+		WHERE
+			is_any_pm = 0
+			AND primary_type != 'SMALL_TYPES_DISCARD'
+			AND fy_close = CASE
+				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
+				ELSE datepart(yy, getDate())
+			END
+		UNION
+		SELECT
+			'% Preventive Completed Ontime' AS label,
+			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
+			CAST(COUNT(wr_id) AS DECIMAL) as total_volume,
+			SUM(is_on_time) as ontime_volume
+		FROM
+			[afm].[dash_kpis]
+		WHERE
+			is_any_pm = 1
+			AND primary_type != 'SMALL_TYPES_DISCARD'
+			AND fy_close = CASE
+				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
+				ELSE datepart(yy, getDate())
+			END 
+		</sql>
+		<table name="wrhwr"
+			role="main" />
+		<field name="label"
+			dataType="text" />
+		<field name="percent_ontime"
+			dataType="number"
+			decimals="0" />
+		<field name="total_volume"
+			dataType="number"
+			decimals="0" />
+		<field name="ontime_volume"
+			dataType="number"
+			decimals="0" />
+	</dataSource>
+
+	<panel id="ontime_kpis_by_close"
+		type="grid"
+		controlType="reportGrid"
+		dataSource="ds_ontime_kpis_by_close">
+		<title>Ontime KPIs for Current FY</title>
+
+		<field name="label">
+			<title>Metric</title>
+		</field>
+		<field name="percent_ontime">
+			<title>% On Time</title>
+		</field>
+		<field name="total_volume">
+			<title>Total Volume</title>
+		</field>
+		<field name="ontime_volume">
+			<title>Ontime Volume</title>
+		</field>
+	</panel>
+</view>

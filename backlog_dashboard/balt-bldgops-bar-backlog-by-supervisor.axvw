@@ -1,0 +1,56 @@
+<view version="2.0">
+    <!-- <title>Volume Received per Month</title> -->
+
+    <dataSource id="ds_backlog_by_supervisor">
+        <sql dialect="sqlserver">
+        SELECT TOP 10
+            supervisor,
+            count(wr_id) as backlog_volume
+        FROM
+            dash_backlog
+        GROUP BY 
+            supervisor
+        ORDER BY 
+            backlog_volume desc
+        </sql>
+        <table name="wrhwr"
+            role="main" />
+        <field name="supervisor"
+            dataType="text" />
+        <field name="backlog_volume"
+            dataType="number"
+            decimals="0" />
+        <sortField name="backlog_volume"
+            ascending="false"
+            table="wrhwr"/>
+    </dataSource>
+
+    <panel id="backlog_by_supervisor"
+        type="htmlChart"
+        controlType="columnChart"
+        dataSource="ds_backlog_by_supervisor"
+        showLegendOnLoad="false"
+        showLegendAsPopUp="false"
+        legendLocation="bottom"
+        unitPrecision="0"
+        showUnitPrefixes="true"
+        showDataTips="true"
+        backgroundColor="0xc6e2ff">
+        <title>Backlog By Supervisor (30+ Days)</title>
+
+        <groupingAxis table="wrhwr"
+            field="supervisor"
+            showLabel="true"
+            labelRotation="0">
+            <title>Supervisor</title>
+        </groupingAxis>
+
+        <dataAxis table="wrhwr"
+            field="backlog_volume"
+            showLabel="true"
+            displayAxis="true">
+            <title>Work Requests</title>
+        </dataAxis>
+
+    </panel>
+</view>
