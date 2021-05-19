@@ -353,3 +353,65 @@ GO
 			days_open > 30
 			AND status not in ('Clo', 'Can', 'Rej', 'R')
 	)
+GO
+	DROP VIEW if exists [afm].[dash_backlog_by_month];
+
+GO
+	CREATE VIEW [afm].[dash_backlog_by_month] AS (
+		SELECT
+			CAST(COALESCE(opened.year, closed.year) AS VARCHAR(4)) + '-' + RIGHT(
+				'00' + CAST(
+					COALESCE(opened.month, closed.month) AS VARCHAR(2)
+				),
+				2
+			) AS calendar_month,
+			CONVERT(
+				DATE,
+				CAST(COALESCE(opened.year, closed.year) AS VARCHAR(4)) + '-' + RIGHT(
+					'00' + CAST(
+						COALESCE(opened.month, closed.month) AS VARCHAR(2)
+					),
+					2
+				) + '-01'
+			) AS month_start,
+			COALESCE(opened.year, closed.year) AS year,
+			COALESCE(opened.month, closed.month) AS month,
+			COALESCE(opened.wr_volume, 0) AS requests_opened,
+			COALESCE(closed.wr_volume, 0) AS requests_closed,
+			SUM(
+				COALESCE(opened.wr_volume, 0) - coalesce(closed.wr_volume, 0)
+			) OVER (
+				ORDER BY
+					COALESCE(opened.year, closed.year),
+					COALESCE(opened.month, closed.month)
+			) AS backlog
+		FROM
+			(
+				SELECT
+					YEAR(date_requested) AS year,
+					MONTH(date_requested) AS month,
+					COUNT(wr_id) AS wr_volume
+				FROM
+					afm.dash_benchmarks
+				WHERE
+					date_requested IS NOT NULL
+					AND status NOT IN ('Can', 'Rej', 'R')
+				GROUP BY
+					YEAR(date_requested),
+					MONTH(date_requested)
+			) opened FULL
+			OUTER JOIN (
+				SELECT
+					YEAR(date_closed) AS year,
+					MONTH(date_closed) AS month,
+					COUNT(wr_id) AS wr_volume
+				FROM
+					afm.wrhwr
+				WHERE
+					status = 'Clo'
+				GROUP BY
+					YEAR(date_closed),
+					MONTH(date_closed)
+			) closed ON opened.year = closed.year
+			AND opened.month = closed.month
+	);
