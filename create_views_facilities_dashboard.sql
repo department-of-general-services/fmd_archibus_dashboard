@@ -119,6 +119,10 @@ GO
 				ELSE datepart(yy, date_requested)
 			END AS 'fy_request',
 			CASE
+				WHEN datepart(mm, date_completed) >= 7 THEN datepart(yy, date_requested) + 1
+				ELSE datepart(yy, date_completed)
+			END AS 'fy_complete',
+			CASE
 				WHEN datepart(mm, date_closed) >= 7 THEN datepart(yy, date_closed) + 1
 				ELSE datepart(yy, date_closed)
 			END AS 'fy_close'
@@ -157,6 +161,11 @@ GO
 				DateAdd(month, DateDiff(month, 0, date_requested), 0),
 				120
 			) AS calendar_month_request,
+			CONVERT(
+				VARCHAR(7),
+				DateAdd(month, DateDiff(month, 0, date_completed), 0),
+				120
+			) AS calendar_month_complete,
 			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_closed), 0),
@@ -232,27 +241,12 @@ GO
 			[afm].[dash_benchmarks]
 	)
 SELECT
-	wr_id,
-	calendar_month_close,
-	calendar_month_request,
-	date_requested,
-	date_completed,
-	date_closed,
-	fy_close,
-	fy_request,
-	primary_type,
-	problem_type,
-	supervisor,
-	c.status,
-	b_number,
-	c.description,
-	pm_group,
+	*,
 	CASE
 		WHEN days_to_completion <= benchmark THEN CAST(1 AS DECIMAL)
 		WHEN unfinished_but_late = 1 THEN CAST(0 AS DECIMAL)
 		ELSE CAST(0 AS DECIMAL)
 	END AS is_on_time,
-	unfinished_but_late,
 	CASE
 		WHEN primary_type IN ('PREVENTIVE_HVAC') THEN CAST(1 AS DECIMAL)
 		ELSE CAST(0 AS DECIMAL)
