@@ -340,7 +340,14 @@ GO
 GO
 	CREATE VIEW [afm].[dash_backlog] AS (
 		SELECT
-			*
+			*,
+			/* This trick allows us to still filter by
+			 empty values, which isn't possible when they remain
+			 raw nulls. */
+			CASE
+				WHEN (supervisor IS NULL) THEN 'NULL'
+				ELSE supervisor
+			END AS supervisor_with_nulls
 		FROM
 			[afm].[dash_benchmarks]
 		WHERE

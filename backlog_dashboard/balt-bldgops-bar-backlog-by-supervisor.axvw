@@ -1,15 +1,55 @@
 <view version="2.0">
     <!-- <title>Volume Received per Month</title> -->
 
+    <js file="balt-bldgops-backlog-drilldown.js" />
+
+    <dataSource id="ds_backlog_by_supervisor_disaggregated">
+        <sql dialect="sqlserver">
+        SELECT 
+            wr_id, 
+			date_requested, 
+			primary_type,
+			building_name,
+            b_number,
+			status,
+			description, 
+            supervisor_with_nulls AS supervisor
+        FROM
+            dash_backlog
+        WHERE supervisor_with_nulls = ${parameters['summaryValueForThisGroup']}
+        </sql>
+        <table name="wrhwr"
+            role="main" />
+        <field name="wr_id"
+            dataType="text" />
+        <field name="date_requested"
+            dataType="date" />
+        <field name="primary_type"
+            dataType="text" />
+        <field name="building_name"
+            dataType="text" />
+        <field name="b_number"
+            dataType="text" />
+        <field name="status"
+            dataType="text" />
+        <field name="description"
+            dataType="text" />
+        <field name="supervisor"
+            dataType="text" />
+        <parameter name="summaryValueForThisGroup"
+            dataType="text"
+            value=""/>
+    </dataSource>
+
     <dataSource id="ds_backlog_by_supervisor">
         <sql dialect="sqlserver">
         SELECT TOP 10
-            supervisor,
+            supervisor_with_nulls AS supervisor,
             count(wr_id) as backlog_volume
         FROM
             dash_backlog
         GROUP BY 
-            supervisor
+            supervisor_with_nulls 
         ORDER BY 
             backlog_volume desc
         </sql>
@@ -38,6 +78,11 @@
         backgroundColor="0xc6e2ff">
         <title>Backlog By Supervisor (30+ Days)</title>
 
+        <event type="onClickItem">
+            <command type="callFunction"
+                functionName="onDrillDownBacklogBySupervisor"/>
+        </event>
+
         <groupingAxis table="wrhwr"
             field="supervisor"
             showLabel="true"
@@ -51,6 +96,55 @@
             displayAxis="true">
             <title>Work Requests</title>
         </dataAxis>
-
     </panel>
+
+    <!-- a detail report -->
+    <panel type="grid"
+        id="chartDrillDown_backlog_by_supervisor"
+        dataSource="ds_backlog_by_supervisor_disaggregated"
+        hidden="true"
+        showLabels="true"
+        showOnLoad="false">
+        <action id="exportXLS">
+            <title>Excel</title>
+            <command type="exportPanel"
+                outputType="xls"
+                panelId="chartDrillDown_backlog_by_supervisor"
+                recordLimit="0"/>
+        </action>
+        <title >Details: Aging Backlog by Supervisor</title>
+        <field table="wrhwr"
+            name="wr_id">
+            <title >Work Request ID</title>
+        </field>
+        <field table="wrhwr"
+            name="date_requested">
+            <title >Date Requested</title>
+        </field>
+        <field table="wrhwr"
+            name="primary_type">
+            <title >Primary Problem Type</title>
+        </field>
+        <field table="wrhwr"
+            name="building_name">
+            <title >Building Name</title>
+        </field>
+        <field table="wrhwr"
+            name="b_number">
+            <title >B-Number</title>
+        </field>
+        <field table="wrhwr"
+            name="status">
+            <title >Status</title>
+        </field>
+        <field table="wrhwr"
+            name="supervisor">
+            <title >Supervisor</title>
+        </field>
+        <field table="wrhwr"
+            name="description">
+            <title >Description</title>
+        </field>
+    </panel>
+
 </view>

@@ -1,9 +1,7 @@
 function onDrillDownBacklogByPrimaryType(item) {
-
 	var panel = View.panels.get("chartDrillDown_backlog_by_primary_type");
 
 	panel.addParameter('summaryValueForThisGroup', item.selectedChartData['wrhwr.primary_type']);
-
 	panel.refresh();
 
 	panel.showInWindow({
@@ -14,15 +12,10 @@ function onDrillDownBacklogByPrimaryType(item) {
 }
 
 
-function onDrillDownByTimespan(item) {
-	//var restriction = new Ab.view.Restriction();
-	//restriction.addClause('wrhwr.trade', item.selectedChartData['wrhwr.trade']);
+function onDrillDownBacklogBySupervisor(item) {
+	var panel = View.panels.get("chartDrillDown_backlog_by_supervisor");
 
-	var panel = View.panels.get("chartDrillDown_metrics");
-
-	panel.addParameter('summaryTimespan', item.selectedChartData['wrhwr.timespan']);
-	panel.addParameter('summaryAction', item.selectedChartData['wrhwr.action']);
-
+	panel.addParameter('summaryValueForThisGroup', item.selectedChartData['wrhwr.supervisor']);
 	panel.refresh();
 
 	panel.showInWindow({
@@ -32,15 +25,31 @@ function onDrillDownByTimespan(item) {
 
 }
 
-function onDrillDownByCalMonth(item) {
-	//var restriction = new Ab.view.Restriction();
-	//restriction.addClause('wrhwr.trade', item.selectedChartData['wrhwr.trade']);
+function onDrillDownBacklogByStatus(item) {
+	var panel = View.panels.get("chartDrillDown_backlog_by_status");
 
-	var panel = View.panels.get("chartDrillDown_monthly_volume");
+	console.log(item.selectedChartData['wrhwr.status'])
 
-	panel.addParameter('summaryMonth', item.selectedChartData['wrhwr.calendar_month']);
-	panel.addParameter('summaryAction', item.selectedChartData['wrhwr.action']);
+	if (item.selectedChartData['wrhwr.status'] === 'Assigned to Work Order') {
+		brief_status = 'AA'
+	}
+	else if (item.selectedChartData['wrhwr.status'] === 'Completed') {
+		brief_status = 'Com'
+	}
+	else if (item.selectedChartData['wrhwr.status'] === 'Closed') {
+		brief_status = 'Clo'
+	}
+	else if (item.selectedChartData['wrhwr.status'] === 'Issued and In Process') {
+		brief_status = 'I'
+	}
+	else if (item.selectedChartData['wrhwr.status'] === 'Stopped') {
+		brief_status = 'S'
+	}
+	else {
+		brief_status = item.selectedChartData['wrhwr.status']
+	}
 
+	panel.addParameter('summaryValueForThisGroup', brief_status);
 	panel.refresh();
 
 	panel.showInWindow({
