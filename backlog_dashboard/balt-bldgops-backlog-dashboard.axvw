@@ -27,13 +27,13 @@
 
 	<panel id="metrics_list"
 		type="view"
-		file="balt-bldgops-grid-workflow-last-30.axvw"
+		file="balt-bldgops-grid-current-backlog.axvw"
 		layout="nested_west"
 		region="north" />
 
 	<panel id="aging_by_trade"
 		type="view"
-		file="balt-bldgops-backlog-by-month.axvw"
+		file="balt-bldgops-line-backlog-by-month.axvw"
 		layout="nested_west"
 		region="center" />
 

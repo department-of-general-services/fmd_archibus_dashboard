@@ -1,0 +1,33 @@
+<view version="2.0">
+	<!-- <title>Work Request Metrics</title> -->
+
+	<dataSource id="ds_current_backlog">
+		<sql dialect="sqlserver">
+			SELECT 
+                'Current backlog' AS label, 
+	            SUM(requests_opened) - SUM(requests_closed) AS current_backlog
+            FROM dash_backlog_by_month
+		</sql>
+		<table name="wrhwr"
+			role="main" />
+		<field name="label"
+			dataType="text" />
+		<field name="current_backlog"
+			dataType="number"
+			decimals="0" />
+	</dataSource>
+
+	<panel id="current_backlog"
+		type="grid"
+		controlType="reportGrid"
+		dataSource="ds_current_backlog">
+		<title>Current Backlog</title>
+
+		<field name="label">
+			<title>Metric</title>
+		</field>
+		<field name="current_backlog">
+			<title>Backlog</title>
+		</field>
+	</panel>
+</view>
