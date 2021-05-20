@@ -1,6 +1,8 @@
 <view version="2.0">
     <!-- <title>Volume Received per Month</title> -->
 
+    <js file="balt-bldgops-backlog-drilldown.js" />
+
     <dataSource id="ds_backlog_by_status">
         <sql dialect="sqlserver">
         SELECT TOP 5
