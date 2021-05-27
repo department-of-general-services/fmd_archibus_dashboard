@@ -20,6 +20,11 @@ GO
 			prob_type AS problem_type,
 			p.pm_group AS pm_group,
 			CASE
+				WHEN (po_number is null)
+				OR (po_number = '0') THEN CAST(0 AS DECIMAL)
+				ELSE CAST(1 AS DECIMAL)
+			END AS 'is_vendor_work',
+			CASE
 				WHEN prob_type = 'AIR QUALITY' THEN 'AIR QUALITY'
 				WHEN prob_type = 'APPLIANCE' THEN 'APPLIANCE'
 				WHEN prob_type = 'BOILER' THEN 'HVAC'
@@ -141,21 +146,7 @@ GO
 GO
 	CREATE VIEW [afm].[dash_benchmarks] AS (
 		SELECT
-			wr_id,
-			status,
-			description,
-			supervisor,
-			date_completed,
-			date_requested,
-			date_closed,
-			fy_request,
-			fy_close,
-			role_name,
-			building_name,
-			b_number,
-			primary_type,
-			problem_type,
-			pm_group,
+			*,
 			CONVERT(
 				VARCHAR(7),
 				DateAdd(month, DateDiff(month, 0, date_requested), 0),
