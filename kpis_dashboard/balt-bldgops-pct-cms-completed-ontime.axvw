@@ -9,7 +9,7 @@
             wr_volume,
             count_on_time
         FROM
-            dash_cms_on_time
+            dash_cms_on_time_by_close
         </sql>
 
         <table name="wrhwr"

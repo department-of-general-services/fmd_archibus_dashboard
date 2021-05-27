@@ -86,7 +86,7 @@
             field="primary_type"
             showLabel="true"
             labelRotation="0">
-            <title>Problem Type</title>
+            <title>Primary Problem Type</title>
         </groupingAxis>
 
         <dataAxis table="wrhwr"

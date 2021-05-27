@@ -8,7 +8,7 @@
             pm_cm_ratio,
             pm_cm_volume
         FROM
-            dash_pm_cm_ratio
+            dash_pm_cm_ratio_by_close
         </sql>
 
         <table name="wrhwr"
@@ -37,7 +37,7 @@
         showUnitPrefixes="true"
         showDataTips="true"
         backgroundColor="0xc6e2ff">
-        <title>PM:CM Ratio</title>
+        <title>PM:CM Ratio (HVAC only)</title>
 
         <groupingAxis dataSource="ds_pm_cm_ratio"
             table="wrhwr"
