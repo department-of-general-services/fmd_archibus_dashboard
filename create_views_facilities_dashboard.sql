@@ -14,6 +14,7 @@ GO
 			r.status,
 			r.description,
 			r.supervisor,
+			r.work_team_id,
 			date_requested,
 			date_completed,
 			date_closed,
@@ -333,12 +334,12 @@ WHERE
 	);
 
 GO
-	DROP VIEW if exists [afm].[dash_cms_on_time_by_close];
+	DROP VIEW if exists [afm].[dash_cms_on_time_by_completion];
 
 GO
-	CREATE VIEW [afm].[dash_cms_on_time_by_close] AS (
+	CREATE VIEW [afm].[dash_cms_on_time_by_completion] AS (
 		SELECT
-			calendar_month_close,
+			calendar_month_complete,
 			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
 			CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
 			SUM(is_on_time) as count_on_time
@@ -348,16 +349,16 @@ GO
 			is_any_pm = 0
 			AND primary_type != 'SMALL_TYPES_DISCARD'
 		GROUP BY
-			calendar_month_close
+			calendar_month_complete
 	);
 
 GO
-	DROP VIEW if exists [afm].[dash_pms_on_time_by_close];
+	DROP VIEW if exists [afm].[dash_pms_on_time_by_completion];
 
 GO
-	CREATE VIEW [afm].[dash_pms_on_time_by_close] AS (
+	CREATE VIEW [afm].[dash_pms_on_time_by_completion] AS (
 		SELECT
-			calendar_month_close,
+			calendar_month_complete,
 			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
 			CAST(COUNT(wr_id) AS DECIMAL) as wr_volume,
 			SUM(is_on_time) as count_on_time
@@ -366,16 +367,16 @@ GO
 		WHERE
 			is_any_pm = 1
 		GROUP BY
-			calendar_month_close
+			calendar_month_complete
 	);
 
 GO
-	DROP VIEW if exists [afm].[dash_pm_cm_ratio_by_close];
+	DROP VIEW if exists [afm].[dash_pm_cm_ratio_by_completion];
 
 GO
-	CREATE VIEW [afm].[dash_pm_cm_ratio_by_close] AS (
+	CREATE VIEW [afm].[dash_pm_cm_ratio_by_completion] AS (
 		SELECT
-			calendar_month_close,
+			calendar_month_complete,
 			CAST(SUM(is_ratio_pm) * 100 AS DECIMAL) / CAST(SUM(is_ratio_cm) AS DECIMAL) AS pm_cm_ratio,
 			SUM(is_ratio_pm) AS pm_volume,
 			SUM(is_ratio_cm) AS cm_volume,
@@ -383,7 +384,7 @@ GO
 		FROM
 			[afm].[dash_kpis]
 		GROUP BY
-			calendar_month_close
+			calendar_month_complete
 	);
 
 GO
