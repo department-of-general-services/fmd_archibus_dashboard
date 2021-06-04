@@ -4,17 +4,17 @@
     <dataSource id="ds_pct_cms_ontime">
         <sql dialect="sqlserver">
         SELECT
-            calendar_month_close,
+            calendar_month_complete,
             percent_ontime,
             wr_volume,
             count_on_time
         FROM
-            dash_cms_on_time_by_close
+            dash_cms_on_time_by_completion
         </sql>
 
         <table name="wrhwr"
             role="main" />
-        <field name="calendar_month_close"
+        <field name="calendar_month_complete"
             dataType="text"
             size="7"/>
         <field name="percent_ontime"
@@ -23,7 +23,7 @@
         <field name="wr_volume"
             dataType="number"
             decimals="0" />
-        <sortField name="calendar_month_close"
+        <sortField name="calendar_month_complete"
             table="wrhwr"/>
     </dataSource>
 
@@ -42,10 +42,10 @@
 
         <groupingAxis dataSource="ds_pct_cms_ontime"
             table="wrhwr"
-            field="calendar_month_close"
+            field="calendar_month_complete"
             showLabel="true"
             labelRotation="0">
-            <title>Month</title>
+            <title>Month When Completed</title>
         </groupingAxis>
 
         <dataAxis dataSource="ds_pct_cms_ontime"
@@ -53,7 +53,7 @@
             field="wr_volume"
             showLabel="true"
             displayAxis="true">
-            <title>Requests Closed</title>
+            <title>Requests Completed</title>
         </dataAxis>
 
         <dataAxis dataSource="ds_pct_cms_ontime"
@@ -61,7 +61,7 @@
             type="line"
             field="percent_ontime"
             showLabel="true"
-             displayAxis="true">
+            displayAxis="true">
             <title>% On-Time</title>
         </dataAxis>
 

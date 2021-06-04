@@ -4,16 +4,16 @@
     <dataSource id="ds_pm_cm_ratio">
         <sql dialect="sqlserver">
         SELECT
-            calendar_month_close,
+            calendar_month_complete,
             pm_cm_ratio,
             pm_cm_volume
         FROM
-            dash_pm_cm_ratio_by_close
+            dash_pm_cm_ratio_by_completion
         </sql>
 
         <table name="wrhwr"
             role="main" />
-        <field name="calendar_month_close"
+        <field name="calendar_month_complete"
             dataType="text"
             size="7"/>
         <field name="pm_cm_ratio"
@@ -22,7 +22,7 @@
         <field name="pm_cm_volume"
             dataType="number"
             decimals="0" />
-        <sortField name="calendar_month_close"
+        <sortField name="calendar_month_complete"
             table="wrhwr"/>
     </dataSource>
 
@@ -41,10 +41,10 @@
 
         <groupingAxis dataSource="ds_pm_cm_ratio"
             table="wrhwr"
-            field="calendar_month_close"
+            field="calendar_month_complete"
             showLabel="true"
             labelRotation="0">
-            <title>Month</title>
+            <title>Month When Completed</title>
         </groupingAxis>
 
         <dataAxis dataSource="ds_pm_cm_ratio"
@@ -52,7 +52,7 @@
             field="pm_cm_volume"
             showLabel="true"
             displayAxis="true">
-            <title>Work Requests Closed</title>
+            <title>HVAC Work Requests Completed</title>
         </dataAxis>
 
         <dataAxis dataSource="ds_pm_cm_ratio"
@@ -61,7 +61,7 @@
             field="pm_cm_ratio"
             showLabel="true"
             displayAxis="true">
-            <title>PM:CM Ratio</title>
+            <title>PM:CM Ratio (HVAC Only)</title>
         </dataAxis>
 
     </panel>
