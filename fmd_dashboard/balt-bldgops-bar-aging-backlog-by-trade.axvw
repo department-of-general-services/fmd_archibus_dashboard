@@ -28,14 +28,13 @@
                     END AS trade
                 FROM
                    dash_benchmarks
-                WHERE
-                    date_requested &gt;= DateAdd(year, -2, '20210430')
-				    AND date_requested &lt;  DateAdd(month, -1, '20210430')
+                WHERE date_requested &gt;= DateAdd(year, -2, DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(day, -30,  DateAdd(month, -1, getDate()))
             ) trades
         WHERE
             trade != 'None'
             AND trade = ${parameters['summaryValueForThisGroup']}
-            AND status IN ('AA', 'A', 'I', 'Com', 'S', 'HC', 'HMI', 'RMI') 
+            AND status NOT IN ('Clo', 'Can', 'Rej', 'R') 
         </sql>
         <table name="wrhwr"
             role="main"/>
@@ -91,13 +90,12 @@
                     END AS trade
                 FROM
                     dash_benchmarks
-                WHERE
-                    date_requested &gt;= DateAdd(year, -2, '20210430')
-				    AND date_requested &lt;  DateAdd(month, -1, '20210430')
+                WHERE date_requested &gt;= DateAdd(year, -2, DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(day, -30,  DateAdd(month, -1, getDate()))
             ) trades
         WHERE
             trade != 'None'
-            AND status IN ('AA', 'A', 'I', 'Com', 'S', 'HC', 'HMI', 'RMI')
+            AND status NOT IN ('Clo', 'Can', 'Rej', 'R')
         GROUP BY
             trade
         </sql>
