@@ -1,0 +1,110 @@
+<view version="2.0">
+    <!-- <title>Volume Received per Month</title> -->
+
+    <dataSource id="ds_completed_to_closed">
+        <sql dialect="sqlserver">
+		SELECT
+            calendar_month_complete,
+            count(*) AS volume_completed,
+            SUM(is_vendor_work) AS volume_vendor,
+            AVG(closed_on_time) * 100 AS percent_closed_on_time
+        FROM
+            dash_kpis
+        GROUP BY
+            calendar_month_complete 
+        </sql>
+
+        <table name="wrhwr"
+            role="main" />
+        <field name="calendar_month_complete"
+            dataType="text"
+            size="7"/>
+        <field name="volume_completed"
+            dataType="number"
+            decimals="0"/>
+        <field name="percent_closed_on_time"
+            dataType="number"
+            decimals="0" />
+    </dataSource>
+
+    <panel id="completed_to_closed"
+        type="htmlChart"
+        controlType="columnLineChart"
+        dataSource="ds_completed_to_closed"
+        showLegendOnLoad="false"
+        showLegendAsPopUp="false"
+        legendLocation="bottom"
+        unitPrecision="0"
+        showUnitPrefixes="true"
+        showDataTips="true"
+        backgroundColor="0xc6e2ff">
+        <title>Percent of Completed Jobs Closed On Time</title>
+
+
+        <groupingAxis dataSource="ds_completed_to_closed"
+            table="wrhwr"
+            field="calendar_month_complete"
+            showLabel="true"
+            labelRotation="0">
+            <title>Month When Completed</title>
+        </groupingAxis>
+
+        <dataAxis table="wrhwr"
+            field="volume_completed"
+            showLabel="true"
+            displayAxis="true">
+            <title >Work Completed</title>
+        </dataAxis>
+
+        <dataAxis type="line"
+            table="wrhwr"
+            field="percent_closed_on_time"
+            showLabel="true"
+            displayAxis="true">
+            <title >Percent Closed On Time</title>
+        </dataAxis>
+
+    </panel>
+
+    <!-- a detail report -->
+    <panel type="grid"
+        id="chartDrillDown_monthly_volume"
+        dataSource="ds_monthly_volume_disaggregated"
+        recordLimit="250"
+        hidden="true"
+        showLabels="false"
+        showOnLoad="false">
+        <action id="exportXLS">
+            <title>Excel</title>
+            <command type="exportPanel"
+                outputType="xls"
+                panelId="chartDrillDown_monthly_volume"
+                recordLimit="0"/>
+        </action>
+        <title >Details: Workflow By Calendar Month</title>
+        <field table="wrhwr"
+            name="wr_id">
+            <title >Work Request ID</title>
+        </field>
+        <field table="wrhwr"
+            name="date_requested">
+            <title >Date Requested</title>
+        </field>
+        <field table="wrhwr"
+            name="problem_type">
+            <title >Problem Type</title>
+        </field>
+        <field table="wrhwr"
+            name="building_name">
+            <title >Building Name</title>
+        </field>
+        <field table="wrhwr"
+            name="status">
+            <title >Status</title>
+        </field>
+        <field table="wrhwr"
+            name="description">
+            <title >Description</title>
+        </field>
+    </panel>
+</view>
