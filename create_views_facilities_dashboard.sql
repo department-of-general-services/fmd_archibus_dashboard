@@ -162,12 +162,53 @@ GO
 				DateAdd(month, DateDiff(month, 0, date_closed), 0),
 				120
 			) AS calendar_month_close,
+			/* Because the benchmarks for the duration between completed and closed
+			 are so tight (2 or 4 days), we measure this duration in weekdays, not
+			 all days */
 			DATEDIFF(day, date_requested, date_completed) AS days_to_completion,
+			(
+				(datediff(day, date_completed, date_closed)) - (datediff(wk, date_completed, date_closed) * 2) - (
+					-- If the start date is Sunday, subtract one
+					CASE
+						WHEN DATENAME(dw, date_completed) = 'Sunday' THEN 1
+						ELSE 0
+					END
+				) - (
+					-- If the end date is Saturday, subtract one
+					CASE
+						WHEN DATENAME(dw, date_closed) = 'Saturday' THEN 1
+						ELSE 0
+					END
+				)
+			) AS weekdays_complete_to_close,
+			-- Measures the duration between request and today's date
 			DATEDIFF(
 				day,
 				date_requested,
 				DateAdd(month, -1, getDate())
-			) AS days_open,
+			) AS days_since_request,
+			-- Measures the duration, in weekdays, between completion and today's date
+			(
+				(
+					datediff(
+						day,
+						date_completed,
+						DateAdd(month, -1, getDate())
+					)
+				) - (
+					datediff(
+						wk,
+						date_completed,
+						DateAdd(month, -1, getDate())
+					) * 2
+				) - (
+					-- If the start date is Sunday, subtract one
+					CASE
+						WHEN DATENAME(dw, date_completed) = 'Sunday' THEN 1
+						ELSE 0
+					END
+				)
+			) AS weekdays_since_completion,
 			CASE
 				WHEN primary_type IN (
 					'BUILDING',
@@ -206,7 +247,14 @@ GO
 					'SECURITY SYSTEMS'
 				) THEN 45
 				WHEN primary_type IN ('DESIGN', 'ROOF', 'DUCT CLEANING') THEN 60
-			END AS benchmark
+			END AS completion_benchmark,
+			/* The closure benchmark is a separate benchmark for the 
+			 duration between the date when a work request is completed and the
+			 date when it is closed. */
+			CASE
+				WHEN is_vendor_work = 1 THEN 4
+				ELSE 2
+			END AS closure_benchmark
 		FROM
 			afm.dash_cmu_problem_types
 	);
@@ -224,20 +272,33 @@ GO
 			CASE
 				WHEN (
 					date_completed IS NULL
-					AND days_open > benchmark
+					AND days_since_request > completion_benchmark
 				) THEN CAST(1 AS DECIMAL)
 				ELSE CAST(0 AS DECIMAL)
-			END AS unfinished_but_late
+			END AS not_completed_but_late,
+			CASE
+				WHEN (
+					date_closed IS NULL
+					AND weekdays_since_completion > closure_benchmark
+				) THEN CAST(1 AS DECIMAL)
+				ELSE CAST(0 AS DECIMAL)
+			END AS not_closed_but_late
 		FROM
 			[afm].[dash_benchmarks]
 	)
 SELECT
 	*,
 	CASE
-		WHEN days_to_completion <= benchmark THEN CAST(1 AS DECIMAL)
-		WHEN unfinished_but_late = 1 THEN CAST(0 AS DECIMAL)
+		WHEN days_to_completion <= completion_benchmark THEN CAST(1 AS DECIMAL)
+		WHEN not_completed_but_late = 1 THEN CAST(0 AS DECIMAL)
 		ELSE CAST(0 AS DECIMAL)
 	END AS is_on_time,
+	CASE
+		WHEN weekdays_complete_to_close <= closure_benchmark THEN CAST(1 AS DECIMAL)
+		WHEN not_completed_but_late = 1 THEN NULL
+		WHEN not_closed_but_late = 1 THEN CAST(0 AS DECIMAL)
+		ELSE CAST(0 AS DECIMAL)
+	END AS closed_on_time,
 	CASE
 		WHEN primary_type IN ('PREVENTIVE_HVAC') THEN CAST(1 AS DECIMAL)
 		ELSE CAST(0 AS DECIMAL)
@@ -253,8 +314,8 @@ SELECT
 FROM
 	catch_unfinished_but_late c
 WHERE
-	date_closed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
-	AND date_closed < dateAdd(
+	date_completed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
+	AND date_completed < dateAdd(
 		MS,
 		-3,
 		DateAdd(
@@ -268,7 +329,7 @@ WHERE
 	 that are still in process and could be on time.*/
 	AND (
 		date_completed IS NOT NULL
-		OR unfinished_but_late = 1
+		OR not_completed_but_late = 1
 	);
 
 GO
@@ -342,7 +403,7 @@ GO
 		FROM
 			[afm].[dash_benchmarks]
 		WHERE
-			days_open > 30
+			days_since_request > 30
 			AND status not in ('Clo', 'Can', 'Rej', 'R')
 	)
 GO
