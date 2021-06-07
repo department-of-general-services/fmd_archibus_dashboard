@@ -6,33 +6,33 @@
         <!-- The SQL query below says to select the specified columns of a table
 		between the date 2 years ago and 30 days before that. -->
         <sql dialect="sqlserver">
-			SELECT primary_type, 
+			SELECT calendar_month_request, 
                 count(wr_id) as wr_volume
 			FROM dash_benchmarks
-			WHERE primary_type IS NOT NULL 
-                AND date_requested &gt;= DateAdd(day, -30, DateAdd(year, -2, getDate()))
-			    AND date_requested &lt; DateAdd(year, -2, getDate())
-		    GROUP BY primary_type
-            HAVING count(wr_id) > 10
+			WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(month, -1, getDate()))
+			    AND date_requested &lt; DateAdd(month, -1, getDate())
+		    GROUP BY calendar_month_request
         </sql>
         <table name="wrhwr"
             role="main" />
-        <field name="primary_type"
+        <field name="calendar_month_request"
             dataType="text"/>
         <field name="wr_volume"
             dataType="number"
             decimals='0'  />
-            <sortField name="primary_type" table="wrhwr"/>
+        <sortField name="calendar_month_request"
+            table="wrhwr"/>
     </dataSource>
 
     <panel id="first_chart"
         type="htmlChart"
         controlType="columnChart"
+         unitPrecision="0"
         dataSource="ds_first_chart">
         <title>Number of Work Requests By Month</title>
 
         <groupingAxis table="wrhwr"
-            field="primary_type">
+            field="calendar_month_request">
             <title>Month</title>
         </groupingAxis>
 

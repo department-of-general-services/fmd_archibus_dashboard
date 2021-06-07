@@ -29,7 +29,7 @@
 		recordLimit="15"
 		controlType="reportGrid"
 		dataSource="ds_hello_world">
-		<title>Work Orders In Last 30 days</title>
+		<title>Work Orders In Last 30 days (Hello World)</title>
 
 		<field name="calendar_month_close">
 			<title>Month of closure</title>
