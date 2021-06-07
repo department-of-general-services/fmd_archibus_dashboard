@@ -1,5 +1,5 @@
 <view version="2.0">
-	<title>Divisional KPIs (By Date of Completion)</title>
+	<title>Facilities KPIs (By Date of Completion)</title>
 
 	<layout id="main">
 		<west split="true"

@@ -13,7 +13,8 @@
             b_number,
 			status,
 			description, 
-            supervisor
+            supervisor, 
+            work_team_id
         FROM
             dash_backlog
         WHERE status = ${parameters['summaryValueForThisGroup']}
@@ -35,6 +36,8 @@
         <field name="description"
             dataType="text" />
         <field name="supervisor"
+            dataType="text" />
+        <field name="work_team_id"
             dataType="text" />
         <parameter name="summaryValueForThisGroup"
             dataType="text"
@@ -137,6 +140,10 @@
         <field table="wrhwr"
             name="supervisor">
             <title >Supervisor</title>
+        </field>
+        <field table="wrhwr"
+            name="work_team_id">
+            <title >Work Team ID</title>
         </field>
         <field table="wrhwr"
             name="description">

@@ -13,6 +13,7 @@
             b_number,
 			status,
 			description, 
+            work_team_id,
             supervisor_with_nulls AS supervisor
         FROM
             dash_backlog
@@ -35,6 +36,8 @@
         <field name="description"
             dataType="text" />
         <field name="supervisor"
+            dataType="text" />
+        <field name="work_team_id"
             dataType="text" />
         <parameter name="summaryValueForThisGroup"
             dataType="text"

@@ -1,7 +1,7 @@
 <view version="2.0">
 	<!-- <title>Volume Received per Month</title> -->
 
-	<js file="balt-bldgops-dash-drilldown.js" />
+	<js file="balt-bldgops-divisional-drilldown.js" />
 
 	<dataSource id="ds_monthly_volume_disaggregated">
 		<sql dialect="sqlserver">

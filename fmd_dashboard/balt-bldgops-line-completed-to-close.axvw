@@ -1,6 +1,53 @@
 <view version="2.0">
     <!-- <title>Volume Received per Month</title> -->
 
+    <js file="balt-bldgops-divisional-drilldown.js" />
+
+    <dataSource id="ds_complete_to_close_disaggregated">
+        <sql dialect="sqlserver">
+         SELECT 
+            wr_id, 
+			date_requested, 
+            date_completed,
+            date_closed,
+			primary_type,
+			building_name,
+            b_number,
+			status,
+			description, 
+            supervisor, 
+            work_team_id, 
+            is_on_time,
+            closed_on_time
+        FROM
+            dash_kpis
+        WHERE calendar_month_complete = ${parameters['summaryValueForThisGroup']}
+        </sql>
+        <table name="wrhwr"
+            role="main" />
+        <field name="wr_id"
+            dataType="text" />
+        <field name="date_requested"
+            dataType="date" />
+        <field name="primary_type"
+            dataType="text" />
+        <field name="building_name"
+            dataType="text" />
+        <field name="b_number"
+            dataType="text" />
+        <field name="status"
+            dataType="text" />
+        <field name="description"
+            dataType="text" />
+        <field name="supervisor"
+            dataType="text" />
+        <field name="work_team_id"
+            dataType="text" />
+        <parameter name="summaryValueForThisGroup"
+            dataType="text"
+            value=""/>
+    </dataSource>
+
     <dataSource id="ds_completed_to_closed">
         <sql dialect="sqlserver">
 		SELECT
@@ -40,6 +87,10 @@
         backgroundColor="0xc6e2ff">
         <title>Percent of Completed Jobs Closed On Time</title>
 
+        <event type="onClickItem">
+            <command type="callFunction"
+                functionName="onDrillDownCompleteToClose"/>
+        </event>
 
         <groupingAxis dataSource="ds_completed_to_closed"
             table="wrhwr"
@@ -66,22 +117,22 @@
 
     </panel>
 
+
     <!-- a detail report -->
     <panel type="grid"
-        id="chartDrillDown_monthly_volume"
-        dataSource="ds_monthly_volume_disaggregated"
-        recordLimit="250"
+        id="chartDrillDown_complete_to_close"
+        dataSource="ds_complete_to_close_disaggregated"
         hidden="true"
-        showLabels="false"
+        showLabels="true"
         showOnLoad="false">
         <action id="exportXLS">
             <title>Excel</title>
             <command type="exportPanel"
                 outputType="xls"
-                panelId="chartDrillDown_monthly_volume"
+                panelId="chartDrillDown_complete_to_close"
                 recordLimit="0"/>
         </action>
-        <title >Details: Workflow By Calendar Month</title>
+        <title >Details: Percent of Completed Jobs Closed On Time</title>
         <field table="wrhwr"
             name="wr_id">
             <title >Work Request ID</title>
@@ -91,16 +142,36 @@
             <title >Date Requested</title>
         </field>
         <field table="wrhwr"
-            name="problem_type">
-            <title >Problem Type</title>
+            name="date_completed">
+            <title >Date Completed</title>
+        </field>
+        <field table="wrhwr"
+            name="date_closed">
+            <title >Date Closed</title>
+        </field>
+        <field table="wrhwr"
+            name="primary_type">
+            <title >Primary Problem Type</title>
         </field>
         <field table="wrhwr"
             name="building_name">
             <title >Building Name</title>
         </field>
         <field table="wrhwr"
+            name="b_number">
+            <title >B-Number</title>
+        </field>
+        <field table="wrhwr"
             name="status">
             <title >Status</title>
+        </field>
+        <field table="wrhwr"
+            name="supervisor">
+            <title >Supervisor</title>
+        </field>
+        <field table="wrhwr"
+            name="work_team_id">
+            <title >Work Team ID</title>
         </field>
         <field table="wrhwr"
             name="description">

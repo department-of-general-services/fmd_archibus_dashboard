@@ -1,7 +1,7 @@
 <view version="2.0">
 	<!-- <title>Work Requests Chart</title> -->
 
-	<js file="balt-bldgops-dash-drilldown.js" />
+	<js file="balt-bldgops-divisional-drilldown.js" />
 
 	<!-- Disaggregated data to show in drilldown -->
 	<dataSource id="ds_chart_metrics_disaggregated">
@@ -15,10 +15,12 @@
 					status, 
 					description,
 					problem_type,
-					building_name
+					building_name, 
+					supervisor, 
+					work_team_id
 			FROM dash_benchmarks
 			WHERE date_requested &gt;= DateAdd(day, -30,  DateAdd(month, -1, getDate()))
-				AND date_requested &lt;  DateAdd(month, -1, getDate())
+				AND date_requested &lt; DateAdd(month, -1, getDate())
 			UNION
 			SELECT '30 Days' AS timespan, 
 				   'Backlog' AS action,
@@ -27,11 +29,13 @@
 					status, 
 					description,
 					problem_type,
-					building_name
+					building_name,
+					supervisor, 
+					work_team_id
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
 				AND date_requested &gt;= DateAdd(day, -30,  DateAdd(month, -1, getDate()))
-				AND date_requested &lt;  DateAdd(month, -1, getDate())
+				AND date_requested &lt; DateAdd(month, -1, getDate())
 			UNION
 			SELECT '60 Days' AS timespan, 
 					'Opened' AS action,
@@ -40,7 +44,9 @@
 					status, 
 					description,
 					problem_type,
-					building_name
+					building_name, 
+					supervisor, 
+					work_team_id
 			FROM dash_benchmarks
 			WHERE date_requested &gt;= DateAdd(day, -60, DateAdd(month, -1, getDate()))
 				AND date_requested &lt;  DateAdd(month, -1, getDate())
@@ -52,7 +58,9 @@
 					status, 
 					description,
 					problem_type,
-					building_name
+					building_name, 
+					supervisor, 
+					work_team_id
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
 				AND date_requested &gt;= DateAdd(day, -60,  DateAdd(month, -1, getDate()))
@@ -65,7 +73,9 @@
 					status, 
 					description,
 					problem_type,
-					building_name
+					building_name, 
+					supervisor, 
+					work_team_id
 			FROM dash_benchmarks
 			WHERE date_requested &gt;= DateAdd(day, -90, DateAdd(month, -1, getDate()))
 				AND date_requested &lt;  DateAdd(month, -1, getDate())
@@ -77,7 +87,9 @@
 					status, 
 					description,
 					problem_type,
-					building_name
+					building_name, 
+					supervisor, 
+					work_team_id
 			FROM dash_benchmarks
 			WHERE status IN ('AA', 'A', 'I', 'Com')
 				AND date_requested &gt;= DateAdd(day, -90,  DateAdd(month, -1, getDate()))
@@ -103,6 +115,10 @@
 		<field name="problem_type"
 			dataType="text" />
 		<field name="building_name"
+			dataType="text" />
+		<field name="supervisor"
+			dataType="text" />
+		<field name="work_team_id"
 			dataType="text" />
 		<parameter name="summaryTimespan"
 			dataType="text"
@@ -277,6 +293,14 @@
 		<field table="wrhwr"
 			name="description">
 			<title >Description</title>
+		</field>
+		<field table="wrhwr"
+			name="supervisor">
+			<title >Supervisor</title>
+		</field>
+		<field table="wrhwr"
+			name="Work Team ID">
+			<title >Work Team ID</title>
 		</field>
 	</panel>
 </view>

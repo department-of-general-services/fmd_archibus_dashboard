@@ -12,7 +12,8 @@
             b_number,
 			status,
 			description, 
-            supervisor
+            supervisor, 
+            work_team_id
         FROM
             dash_backlog
         WHERE primary_type = ${parameters['summaryValueForThisGroup']}
@@ -34,6 +35,8 @@
         <field name="description"
             dataType="text" />
         <field name="supervisor"
+            dataType="text" />
+        <field name="work_team_id"
             dataType="text" />
         <parameter name="summaryValueForThisGroup"
             dataType="text"
