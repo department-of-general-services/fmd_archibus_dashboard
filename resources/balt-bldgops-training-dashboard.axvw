@@ -3,7 +3,7 @@
 
 	<layout id="main">
 		<west split="true"
-			initialSize="40%" />
+			initialSize="50%" />
 		<center />
 	</layout>
 
