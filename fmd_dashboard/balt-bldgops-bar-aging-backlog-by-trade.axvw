@@ -1,7 +1,7 @@
 <view version="2.0">
     <!-- <title>Work Requests Chart</title> -->
 
-    <js file="balt-bldgops-divisional-drilldown.js" />
+    <js file="balt-bldgops-fmd-divisional-drilldown.js" />
 
     <!-- Disaggregated data to show in drilldown. -->
     <dataSource id="ds_aging_by_trade_disaggregated">
