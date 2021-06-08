@@ -1,7 +1,7 @@
 <view version="2.0">
     <!-- <title>Work Requests Chart</title> -->
 
-    <js file="balt-bldgops-dash-drilldown.js" />
+    <js file="balt-bldgops-fmd-divisional-drilldown.js" />
 
     <!-- Disaggregated data to show in drilldown. -->
     <dataSource id="ds_aging_by_trade_disaggregated">
@@ -17,6 +17,7 @@
                     date_requested,
                     description,
                     problem_type,
+                    work_team_id,
                     CASE
                         WHEN primary_type = 'ELECTRICAL' THEN 'Electrical'
                         WHEN primary_type = 'PAINTING' THEN 'Painting'
@@ -28,14 +29,13 @@
                     END AS trade
                 FROM
                    dash_benchmarks
-                WHERE
-                    date_requested &gt;= DateAdd(year, -2, '20210430')
-				    AND date_requested &lt;  DateAdd(month, -1, '20210430')
+                WHERE date_requested &gt;= DateAdd(year, -2, DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(day, -30,  DateAdd(month, -1, getDate()))
             ) trades
         WHERE
             trade != 'None'
             AND trade = ${parameters['summaryValueForThisGroup']}
-            AND status IN ('AA', 'A', 'I', 'Com', 'S', 'HC', 'HMI', 'RMI') 
+            AND status NOT IN ('Clo', 'Can', 'Rej', 'R') 
         </sql>
         <table name="wrhwr"
             role="main"/>
@@ -62,6 +62,9 @@
             dataType="text"/>
         <field table="wrhwr"
             name="supervisor"
+            dataType="text"/>
+        <field table="wrhwr"
+            name="work_team_id"
             dataType="text"/>
         <parameter name="summaryValueForThisGroup"
             dataType="text"
@@ -91,13 +94,12 @@
                     END AS trade
                 FROM
                     dash_benchmarks
-                WHERE
-                    date_requested &gt;= DateAdd(year, -2, '20210430')
-				    AND date_requested &lt;  DateAdd(month, -1, '20210430')
+                WHERE date_requested &gt;= DateAdd(year, -2, DateAdd(month, -1, getDate()))
+				AND date_requested &lt;  DateAdd(day, -30,  DateAdd(month, -1, getDate()))
             ) trades
         WHERE
             trade != 'None'
-            AND status IN ('AA', 'A', 'I', 'Com', 'S', 'HC', 'HMI', 'RMI')
+            AND status NOT IN ('Clo', 'Can', 'Rej', 'R')
         GROUP BY
             trade
         </sql>
@@ -182,12 +184,13 @@
             <title >Supervisor</title>
         </field>
         <field table="wrhwr"
+            name="work_team_id">
+            <title >Work Team ID</title>
+        </field>
+        <field table="wrhwr"
             name="description">
             <title >Description</title>
         </field>
-        <field table="wrhwr"
-            name="supervisor">
-            <title >Supervisor</title>
-        </field>
+
     </panel>
 </view>

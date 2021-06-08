@@ -25,22 +25,30 @@ def set_up_dir(zip_dir, view_dir):
     return
 
 
-def get_files(extensions):
+def get_files(path, extensions):
     all_files = []
     for ext in extensions:
-        all_files.extend(Path.cwd().glob(ext))
+        all_files.extend(path.glob(ext))
     return(all_files)
 
 
-def loop_through_axvw_and_js(prod_dir, to_replace, replace_with):
-    file_paths = get_files(['*.axvw', '*.js', '*.sql'])
+def loop_through_axvw_and_js(test_dir, prod_dir, to_replace, replace_with):
+    file_paths = get_files(test_dir, ['*.axvw', '*.js', '*.sql'])
     for file_path in file_paths:
         print(file_path.name)
         with open(file_path, "r") as f:
             axvw_text = f.read()
             prod_text = re.sub(to_replace, replace_with, axvw_text)
-        with open(prod_dir / file_path.name, "w") as f:
-            f.write(prod_text)
+        if test_dir.name == "dashboards":
+            with open(prod_dir / file_path.name, "w") as f:
+                f.write(prod_text)
+        elif test_dir.parent.name == "dashboards":
+            subdir = prod_dir / test_dir.name
+            if not subdir.exists():
+                subdir.mkdir()
+            with open(subdir / file_path.name, "w") as f:
+                f.write(prod_text)
+
     return
 
 
@@ -57,9 +65,18 @@ if __name__ == "__main__":
     view_dir = zip_dir / "views"
     set_up_dir(zip_dir, view_dir)
 
-    to_replace = re.escape(r"DateAdd(year, -2, getDate())")
+    to_replace = re.escape(r"DateAdd(month, -1, getDate())")
     replace_with = r"getDate()"
-    loop_through_axvw_and_js(view_dir, to_replace, replace_with)
+    test_dir = Path.cwd()
+    loop_through_axvw_and_js(test_dir, view_dir, to_replace, replace_with)
+    
+    dash_dirs = [test_dir / "backlog_dashboard", 
+                 test_dir / "kpis_dashboard",
+                 test_dir / "fmd_dashboard"]
+
+    for dash_dir in dash_dirs: 
+        loop_through_axvw_and_js(dash_dir, view_dir, to_replace, replace_with)
+
     zip_up_dash(zip_dir, view_dir)
 
     print("Work completed.")
