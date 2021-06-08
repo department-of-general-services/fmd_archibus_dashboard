@@ -1,7 +1,6 @@
 <view version="2.0">
-    <!-- <title>Volume Received per Month</title> -->
 
-    <js file="balt-bldgops-divisional-drilldown.js" />
+    <js file="balt-bldgops-fmd-divisional-drilldown.js" />
 
     <dataSource id="ds_complete_to_close_disaggregated">
         <sql dialect="sqlserver">
@@ -17,8 +16,9 @@
 			description, 
             supervisor, 
             work_team_id, 
-            is_on_time,
-            closed_on_time
+            weekdays_complete_to_close,
+            closed_on_time, 
+            calendar_month_complete
         FROM
             dash_kpis
         WHERE calendar_month_complete = ${parameters['summaryValueForThisGroup']}
@@ -43,6 +43,12 @@
             dataType="text" />
         <field name="work_team_id"
             dataType="text" />
+        <field name="weekdays_complete_to_close"
+            dataType="number"
+            decimals="0" />
+        <field name="closed_on_time"
+            dataType="number"
+            decimals="0" />
         <parameter name="summaryValueForThisGroup"
             dataType="text"
             value=""/>
@@ -112,7 +118,7 @@
             field="percent_closed_on_time"
             showLabel="true"
             displayAxis="true">
-            <title >Percent Closed On Time</title>
+            <title >% Closed On Time</title>
         </dataAxis>
 
     </panel>
@@ -122,7 +128,9 @@
     <panel type="grid"
         id="chartDrillDown_complete_to_close"
         dataSource="ds_complete_to_close_disaggregated"
+        recordLimit="250"
         hidden="true"
+        unitPrecision="0"
         showLabels="true"
         showOnLoad="false">
         <action id="exportXLS">
@@ -172,6 +180,14 @@
         <field table="wrhwr"
             name="work_team_id">
             <title >Work Team ID</title>
+        </field>
+        <field table="wrhwr"
+            name="closed_on_time">
+            <title >Closed on Time</title>
+        </field>
+        <field table="wrhwr"
+            name="weekdays_complete_to_close">
+            <title >Weekdays to Closure</title>
         </field>
         <field table="wrhwr"
             name="description">
