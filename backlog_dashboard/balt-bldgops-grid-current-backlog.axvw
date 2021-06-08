@@ -4,7 +4,7 @@
 	<dataSource id="ds_current_backlog">
 		<sql dialect="sqlserver">
 			SELECT 
-                'Current backlog' AS label, 
+                'Total backlog' AS label, 
 	            SUM(requests_opened) - SUM(requests_closed) AS current_backlog
             FROM dash_backlog_by_month
 		</sql>

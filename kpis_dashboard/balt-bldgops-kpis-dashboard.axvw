@@ -11,7 +11,7 @@
 		containingLayout="main"
 		region="west">
 		<north split="true"
-			initialSize="22.5%" />
+			initialSize="24%" />
 		<south split="true"
 			initialSize="50%" />
 		<center />

@@ -121,7 +121,7 @@
 		dataSource="ds_monthly_volume"
 		showLegendOnLoad="true"
 		showLegendAsPopUp="false"
-		legendLocation="bottom"
+		legendLocation="right"
 		unitPrecision="0"
 		showUnitPrefixes="true"
 		showDataTips="true"
