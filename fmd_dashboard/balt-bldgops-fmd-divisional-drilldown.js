@@ -1,5 +1,5 @@
 function onDrillDownCompleteToClose(item) {
-	var panel = View.panels.get("chartDrillDown_aging_by_trade");
+	var panel = View.panels.get("chartDrillDown_complete_to_close");
 
 	panel.addParameter('summaryValueForThisGroup', item.selectedChartData['wrhwr.calendar_month_complete']);
 
