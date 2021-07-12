@@ -1,14 +1,14 @@
-USE [DGS_RAND_ARCHIBUS]
+USE [DGS_Archibus]
 GO
 SET
 	ANSI_NULLS ON
 GO
 SET
 	QUOTED_IDENTIFIER ON
+--GO
+--	DROP VIEW if exists [afm].[dash_cmu_problem_types]
 GO
-	DROP VIEW if exists [afm].[dash_cmu_problem_types]
-GO
-	CREATE VIEW [afm].[dash_cmu_problem_types] AS (
+	alter VIEW [afm].[dash_cmu_problem_types] AS (
 		SELECT
 			wr_id,
 			r.status,
@@ -142,10 +142,10 @@ GO
 			AND prob_type NOT IN ('TEST', 'TEST (DO NOT USE)', 'TEST(DO NOT USE)')
 	);
 
+--GO
+--	DROP VIEW if exists [afm].[dash_benchmarks]
 GO
-	DROP VIEW if exists [afm].[dash_benchmarks]
-GO
-	CREATE VIEW [afm].[dash_benchmarks] AS (
+	alter VIEW [afm].[dash_benchmarks] AS (
 		SELECT
 			*,
 			CONVERT(
@@ -186,7 +186,7 @@ GO
 			DATEDIFF(
 				day,
 				date_requested,
-				DateAdd(month, -1, getDate())
+				getDate()
 			) AS days_since_request,
 			-- Measures the duration, in weekdays, between completion and today's date
 			(
@@ -194,13 +194,13 @@ GO
 					datediff(
 						day,
 						date_completed,
-						DateAdd(month, -1, getDate())
+						getDate()
 					)
 				) - (
 					datediff(
 						wk,
 						date_completed,
-						DateAdd(month, -1, getDate())
+						getDate()
 					) * 2
 				) - (
 					-- If the start date is Sunday, subtract one
@@ -260,11 +260,11 @@ GO
 			afm.dash_cmu_problem_types
 	);
 
-GO
-	DROP VIEW if exists [afm].[dash_kpis];
+--GO
+--	DROP VIEW if exists [afm].[dash_kpis];
 
 GO
-	CREATE VIEW [afm].[dash_kpis] AS WITH catch_unfinished_but_late
+	alter VIEW [afm].[dash_kpis] AS WITH catch_unfinished_but_late
 	/*This query allows us to account for work that hasn't been 
 	 completed yet, but is already past the benchmark.*/
 	AS (
@@ -315,16 +315,16 @@ SELECT
 FROM
 	catch_unfinished_but_late c
 WHERE
-	date_completed >= DateAdd(month, -13, DateAdd(month, -1, getDate()))
-	AND date_completed < dateAdd(
+	date_completed >= DateAdd(month, -12, getDate())
+	/* AND date_completed < dateAdd(
 		MS,
 		-3,
 		DateAdd(
 			MM,
-			DateDiff(MM, 0, DateAdd(month, -1, getDate())),
+			DateDiff(MM, 0, getDate()),
 			0
 		)
-	)
+	) */
 	/*For the KPIs table, we're only interested in jobs that we
 	 can label as on time or not. So we must throw away the jobs 
 	 that are still in process and could be on time.*/
@@ -333,11 +333,11 @@ WHERE
 		OR not_completed_but_late = 1
 	);
 
-GO
-	DROP VIEW if exists [afm].[dash_cms_on_time_by_completion];
+--GO
+--	DROP VIEW if exists [afm].[dash_cms_on_time_by_completion];
 
 GO
-	CREATE VIEW [afm].[dash_cms_on_time_by_completion] AS (
+	alter VIEW [afm].[dash_cms_on_time_by_completion] AS (
 		SELECT
 			calendar_month_complete,
 			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
@@ -352,11 +352,11 @@ GO
 			calendar_month_complete
 	);
 
-GO
-	DROP VIEW if exists [afm].[dash_pms_on_time_by_completion];
+--GO
+--	DROP VIEW if exists [afm].[dash_pms_on_time_by_completion];
 
 GO
-	CREATE VIEW [afm].[dash_pms_on_time_by_completion] AS (
+	alter VIEW [afm].[dash_pms_on_time_by_completion] AS (
 		SELECT
 			calendar_month_complete,
 			SUM(is_on_time) * 100 / COUNT(wr_id) as percent_ontime,
@@ -370,11 +370,11 @@ GO
 			calendar_month_complete
 	);
 
-GO
-	DROP VIEW if exists [afm].[dash_pm_cm_ratio_by_completion];
+--GO
+--	DROP VIEW if exists [afm].[dash_pm_cm_ratio_by_completion];
 
 GO
-	CREATE VIEW [afm].[dash_pm_cm_ratio_by_completion] AS (
+	alter VIEW [afm].[dash_pm_cm_ratio_by_completion] AS (
 		SELECT
 			calendar_month_complete,
 			CAST(SUM(is_ratio_pm) * 100 AS DECIMAL) / CAST(SUM(is_ratio_cm) AS DECIMAL) AS pm_cm_ratio,
@@ -387,11 +387,11 @@ GO
 			calendar_month_complete
 	);
 
-GO
-	DROP VIEW if exists [afm].[dash_backlog];
+--GO
+--	DROP VIEW if exists [afm].[dash_backlog];
 
 GO
-	CREATE VIEW [afm].[dash_backlog] AS (
+	alter VIEW [afm].[dash_backlog] AS (
 		SELECT
 			*,
 			/* This trick allows us to still filter by
@@ -407,11 +407,11 @@ GO
 			days_since_request > 30
 			AND status not in ('Clo', 'Can', 'Rej', 'R')
 	)
-GO
-	DROP VIEW if exists [afm].[dash_backlog_by_month];
+--GO
+--	DROP VIEW if exists [afm].[dash_backlog_by_month];
 
 GO
-	CREATE VIEW [afm].[dash_backlog_by_month] AS (
+	alter VIEW [afm].[dash_backlog_by_month] AS (
 		SELECT
 			CAST(COALESCE(opened.year, closed.year) AS VARCHAR(4)) + '-' + RIGHT(
 				'00' + CAST(
