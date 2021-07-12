@@ -37,11 +37,7 @@
 		layout="nested_west"
 		region="center" />
 
-	<panel id="pm_cm_ratio_by_month_closed"
-		type="view"
-		file="balt-bldgops-pm-cm-ratio.axvw"
-		layout="nested_west"
-		region="south" />
+	
 
 	<panel id="pct_pms_completed_on_time_by_month_closed"
 		type="view"
