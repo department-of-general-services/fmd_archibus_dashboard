@@ -9,14 +9,13 @@
 			CAST(COUNT(wr_id) AS DECIMAL) as total_volume,
 			SUM(is_on_time) as ontime_volume
 		FROM
-			[afm].[dash_kpis]
+			dash_kpis
 		WHERE
 			is_any_pm = 0
-			AND primary_type != 'SMALL_TYPES_DISCARD'
-			AND fy_close = CASE
-				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
-				ELSE datepart(yy, getDate())
-			END
+			
+			And fy_complete = 2022
+			
+			
 		UNION
 		SELECT
 			'% Preventive Completed Ontime' AS label,
@@ -24,14 +23,11 @@
 			CAST(COUNT(wr_id) AS DECIMAL) as total_volume,
 			SUM(is_on_time) as ontime_volume
 		FROM
-			[afm].[dash_kpis]
+			dash_kpis
 		WHERE
 			is_any_pm = 1
-			AND primary_type != 'SMALL_TYPES_DISCARD'
-			AND fy_close = CASE
-				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
-				ELSE datepart(yy, getDate())
-			END 
+			
+			And fy_complete = 2022
 		</sql>
 		<table name="wrhwr"
 			role="main" />
