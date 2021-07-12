@@ -78,6 +78,9 @@
         <field name="percent_closed_on_time"
             dataType="number"
             decimals="0" />
+        <sortField name="calendar_month_complete"
+            ascending="true"
+            table="wrhwr"/>
     </dataSource>
 
     <panel id="completed_to_closed"
