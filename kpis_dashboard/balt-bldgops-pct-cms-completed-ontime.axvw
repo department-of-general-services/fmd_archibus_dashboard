@@ -66,6 +66,10 @@
         showDataTips="true"
         backgroundColor="0xc6e2ff">
         <title>Percentage of CMs Completed On Time</title>
+        <event type="onClickItem">
+            <command type="callFunction"
+                functionName="onDrillDownCMsByCalendarMonth"/>
+        </event>
 
         <groupingAxis dataSource="ds_pct_cms_ontime"
             table="wrhwr"
