@@ -2,6 +2,32 @@
     <!-- <title>Volume Received per Month</title> -->
         <js file="balt-bldgops-divisional-drilldown.js" />
 
+   <dataSource id="ds_pct_cms_ontime_disaggregated">
+        <sql dialect="sqlserver">
+        SELECT
+            calendar_month_complete,
+            wr_id,
+            primary_type
+        FROM
+            dash_kpis
+        WHERE calendar_month_complete = ${parameters['summaryValueForThisGroup']}
+
+        </sql>
+
+        <table name="wrhwr"
+            role="main" />
+        <field name="calendar_month_complete"
+            dataType="text"
+            size="7"/>
+        <field name="wr_id"
+            dataType="integer" />
+        <field name="primary_type"
+            dataType="text"/>
+        <parameter name="summaryValueForThisGroup"
+            dataType="text"
+            value=""/>
+    </dataSource>
+    
     <dataSource id="ds_pct_cms_ontime">
         <sql dialect="sqlserver">
         SELECT
