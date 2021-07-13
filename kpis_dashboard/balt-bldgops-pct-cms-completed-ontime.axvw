@@ -97,4 +97,36 @@
         </dataAxis>
 
     </panel>
+
+    <!-- a detail report -->
+    <panel type="grid"
+        id="chartDrillDown_pct_cms_ontime"
+        dataSource="ds_pct_cms_ontime_disaggregated"
+        hidden="true"
+        showLabels="true"
+        showOnLoad="false">
+        <action id="exportXLS">
+            <title>Excel</title>
+            <command type="exportPanel"
+                outputType="xls"
+                panelId="chartDrillDown_pct_cms_ontime"
+                recordLimit="0"/>
+        </action>
+        <title >Details: Percent CMs Completed Ontime</title>
+        <field table="wrhwr"
+            name="wr_id">
+            <title >Work Request ID</title>
+        </field>
+       
+        <field table="wrhwr"
+            name="primary_type">
+            <title >Primary Problem Type</title>
+        </field>
+
+        <field table="wrhwr"
+            name="calendar_month_complete">
+            <title >Calendar Month</title>
+        </field>
+
+    </panel>
 </view>
