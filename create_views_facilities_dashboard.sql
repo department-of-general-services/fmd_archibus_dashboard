@@ -125,7 +125,7 @@ GO
 				ELSE datepart(yy, date_requested)
 			END AS 'fy_request',
 			CASE
-				WHEN datepart(mm, date_completed) >= 7 THEN datepart(yy, date_requested) + 1
+				WHEN datepart(mm, date_completed) >= 7 THEN datepart(yy, date_completed) + 1
 				ELSE datepart(yy, date_completed)
 			END AS 'fy_complete',
 			CASE
