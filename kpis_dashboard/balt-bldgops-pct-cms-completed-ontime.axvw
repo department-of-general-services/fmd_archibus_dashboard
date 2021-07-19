@@ -34,9 +34,34 @@
             dataType="integer" />
         <field name="primary_type"
             dataType="text"/>
+        <field name="date_requested"
+            dataType="date" />
+        <field name="date_completed"
+            dataType="date" />
+        <field name="primary_type"
+            dataType="text" />
+        <field name="building_name"
+            dataType="text" />
+        <field name="b_number"
+            dataType="text" />
+        <field name="status"
+            dataType="text" />
+        <field name="description"
+            dataType="text" />
+        <field name="supervisor"
+            dataType="text" />
+        <field name="work_team_id"
+            dataType="text" />
+        <field name="days_to_completion"
+            dataType="integer" />
+        <field name="completion_benchmark"
+            dataType="integer" />
+        <field name="is_on_time"
+            dataType="integer" />
         <parameter name="summaryValueForThisGroup"
             dataType="text"
             value=""/>
+
     </dataSource>
     
     <dataSource id="ds_pct_cms_ontime">
