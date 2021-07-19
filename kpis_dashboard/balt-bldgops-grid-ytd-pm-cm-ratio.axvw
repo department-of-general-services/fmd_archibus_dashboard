@@ -12,7 +12,7 @@
 		FROM
 			dash_kpis
 		WHERE
-			fy_close = CASE
+			fy_complete = CASE
 				WHEN datepart(mm, getDate()) &gt;= 7 THEN datepart(yy, getDate()) + 1
 				ELSE datepart(yy, getDate())
 			END 
