@@ -7,7 +7,18 @@
         SELECT
             calendar_month_complete,
             wr_id,
-            primary_type
+            primary_type,
+           	date_requested, 
+            date_completed,
+			building_name,
+            b_number,
+			status,
+			description, 
+            work_team_id,
+            supervisor,
+            days_to_completion,
+            completion_benchmark,
+            is_on_time
         FROM
             dash_kpis
         WHERE calendar_month_complete = ${parameters['summaryValueForThisGroup']}
