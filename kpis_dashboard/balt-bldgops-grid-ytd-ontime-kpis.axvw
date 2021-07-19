@@ -12,10 +12,11 @@
 			dash_kpis
 		WHERE
 			is_any_pm = 0
-			
-			And fy_complete = 2022
-			
-			
+			AND primary_type != 'SMALL_TYPES_DISCARD'
+			AND fy_complete = CASE
+				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
+				ELSE datepart(yy, getDate())
+			END
 		UNION
 		SELECT
 			'% Preventive Completed Ontime' AS label,
@@ -26,8 +27,11 @@
 			dash_kpis
 		WHERE
 			is_any_pm = 1
-			
-			And fy_complete = 2022
+			AND primary_type != 'SMALL_TYPES_DISCARD'
+			AND fy_complete = CASE
+				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
+				ELSE datepart(yy, getDate())
+			END
 		</sql>
 		<table name="wrhwr"
 			role="main" />
