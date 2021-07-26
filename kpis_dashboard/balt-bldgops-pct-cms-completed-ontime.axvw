@@ -1,8 +1,8 @@
 <view version="2.0">
     <!-- <title>Volume Received per Month</title> -->
-        <js file="balt-bldgops-divisional-drilldown.js" />
+    <js file="balt-bldgops-divisional-drilldown.js" />
 
-   <dataSource id="ds_pct_cms_ontime_disaggregated">
+    <dataSource id="ds_pct_cms_ontime_disaggregated">
         <sql dialect="sqlserver">
         SELECT
             calendar_month_complete,
@@ -22,7 +22,8 @@
         FROM
             dash_kpis
         WHERE calendar_month_complete = ${parameters['summaryValueForThisGroup']}
-
+			AND is_any_pm = 0
+			AND primary_type != 'SMALL_TYPES_DISCARD'
         </sql>
 
         <table name="wrhwr"
@@ -63,7 +64,7 @@
             value=""/>
 
     </dataSource>
-    
+
     <dataSource id="ds_pct_cms_ontime">
         <sql dialect="sqlserver">
         SELECT
@@ -153,7 +154,7 @@
             name="wr_id">
             <title >Work Request ID</title>
         </field>
-       
+
         <field table="wrhwr"
             name="primary_type">
             <title >Primary Problem Type</title>
