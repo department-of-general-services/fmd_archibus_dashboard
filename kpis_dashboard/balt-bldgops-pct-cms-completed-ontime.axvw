@@ -154,16 +154,49 @@
             name="wr_id">
             <title >Work Request ID</title>
         </field>
-
         <field table="wrhwr"
             name="primary_type">
             <title >Primary Problem Type</title>
         </field>
-
         <field table="wrhwr"
-            name="calendar_month_complete">
-            <title >Calendar Month</title>
+            name="date_requested">
+            <title >Date Requested</title>
         </field>
-
+        <field table="wrhwr"
+            name="date_completed">
+            <title >Date Completed</title>
+        </field>
+        <field table="wrhwr"
+            name="building_name">
+            <title >Building Name</title>
+        </field>
+        <field table="wrhwr"
+            name="b_number">
+            <title >B-Number</title>
+        </field>
+        <field table="wrhwr"
+            name="status">
+            <title >Status</title>
+        </field>
+        <field table="wrhwr"
+            name="work_team_id">
+            <title >Work Team ID</title>
+        </field>
+        <field table="wrhwr"
+            name="supervisor">
+            <title >Supervisor</title>
+        </field>
+        <field table="wrhwr"
+            name="days_to_completion">
+            <title >Days to Completion</title>
+        </field>
+        <field table="wrhwr"
+            name="completion_benchmark">
+            <title >On Time Benchmark</title>
+        </field>
+        <field table="wrhwr"
+            name="is_on_time">
+            <title >Is on Time</title>
+        </field>
     </panel>
 </view>
