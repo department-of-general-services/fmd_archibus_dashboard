@@ -9,7 +9,7 @@
         FROM
             dash_backlog_by_month
         WHERE 
-            month_start &gt;= DateAdd(month, -13, DateAdd(month, -1, getDate()))
+            month_start &gt;= DateAdd(month, -13, getDate())
         </sql>
         <table name="wrhwr"
             role="main" />

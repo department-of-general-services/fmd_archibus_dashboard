@@ -3,20 +3,19 @@
 
 	<dataSource id="ds_wrhwr_metrics">
 		<sql dialect="sqlserver">
-			SELECT 'Opened in Last 30 Days' AS label, COUNT(*) as count_wr
-			FROM wrhwr
-			WHERE prob_type IS NOT NULL
-				AND prob_type != 'TEST(DO NOT USE)'
-				AND date_requested &gt;= DateAdd(day, -30, '20210430')
-				AND date_requested &lt; '20210430'
+			SELECT 'Opened in Last 30 Days' AS label, 
+				COUNT(wr_id) as count_wr
+			FROM dash_benchmarks
+			WHERE date_requested &gt;= DateAdd(day, -30, getDate())
+
 			UNION
-			SELECT 'Closed in Last 30 Days' AS label, COUNT(*) as count_wr
+
+			SELECT 'Closed in Last 30 Days' AS label, 
+				COUNT(wr_id) as count_wr
 			FROM wrhwr
-			WHERE prob_type IS NOT NULL
-				AND prob_type != 'TEST(DO NOT USE)'
-				AND status = 'Clo'
-				AND date_closed &gt;= DateAdd(day, -30, DateAdd(year, -2, '20210430'))
-				AND date_closed &lt; DateAdd(year, -2, '20210430')
+			WHERE status = 'Clo'
+			AND date_closed &gt;= DateAdd(day, -30, getDate())
+
 		</sql>
 		<table name="wrhwr"
 			role="main" />

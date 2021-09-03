@@ -1,5 +1,69 @@
 <view version="2.0">
     <!-- <title>Volume Received per Month</title> -->
+    <js file="balt-bldgops-divisional-drilldown.js" />
+
+    <dataSource id="ds_pct_cms_ontime_disaggregated">
+        <sql dialect="sqlserver">
+        SELECT
+            calendar_month_complete,
+            wr_id,
+            primary_type,
+           	date_requested, 
+            date_completed,
+			building_name,
+            b_number,
+			status,
+			description, 
+            work_team_id,
+            supervisor,
+            days_to_completion,
+            completion_benchmark,
+            is_on_time
+        FROM
+            dash_kpis
+        WHERE calendar_month_complete = ${parameters['summaryValueForThisGroup']}
+			AND is_any_pm = 0
+			AND primary_type != 'SMALL_TYPES_DISCARD'
+        </sql>
+
+        <table name="wrhwr"
+            role="main" />
+        <field name="calendar_month_complete"
+            dataType="text"
+            size="7"/>
+        <field name="wr_id"
+            dataType="integer" />
+        <field name="primary_type"
+            dataType="text"/>
+        <field name="date_requested"
+            dataType="date" />
+        <field name="date_completed"
+            dataType="date" />
+        <field name="primary_type"
+            dataType="text" />
+        <field name="building_name"
+            dataType="text" />
+        <field name="b_number"
+            dataType="text" />
+        <field name="status"
+            dataType="text" />
+        <field name="description"
+            dataType="text" />
+        <field name="supervisor"
+            dataType="text" />
+        <field name="work_team_id"
+            dataType="text" />
+        <field name="days_to_completion"
+            dataType="integer" />
+        <field name="completion_benchmark"
+            dataType="integer" />
+        <field name="is_on_time"
+            dataType="integer" />
+        <parameter name="summaryValueForThisGroup"
+            dataType="text"
+            value=""/>
+
+    </dataSource>
 
     <dataSource id="ds_pct_cms_ontime">
         <sql dialect="sqlserver">
@@ -39,6 +103,10 @@
         showDataTips="true"
         backgroundColor="0xc6e2ff">
         <title>Percentage of CMs Completed On Time</title>
+        <event type="onClickItem">
+            <command type="callFunction"
+                functionName="onDrillDownCMsByCalendarMonth"/>
+        </event>
 
         <groupingAxis dataSource="ds_pct_cms_ontime"
             table="wrhwr"
@@ -65,5 +133,70 @@
             <title>% On-Time</title>
         </dataAxis>
 
+    </panel>
+
+    <!-- a detail report -->
+    <panel type="grid"
+        id="chartDrillDown_pct_cms_ontime"
+        dataSource="ds_pct_cms_ontime_disaggregated"
+        hidden="true"
+        showLabels="true"
+        showOnLoad="false">
+        <action id="exportXLS">
+            <title>Excel</title>
+            <command type="exportPanel"
+                outputType="xls"
+                panelId="chartDrillDown_pct_cms_ontime"
+                recordLimit="0"/>
+        </action>
+        <title >Details: Percent CMs Completed Ontime</title>
+        <field table="wrhwr"
+            name="wr_id">
+            <title >Work Request ID</title>
+        </field>
+        <field table="wrhwr"
+            name="primary_type">
+            <title >Primary Problem Type</title>
+        </field>
+        <field table="wrhwr"
+            name="date_requested">
+            <title >Date Requested</title>
+        </field>
+        <field table="wrhwr"
+            name="date_completed">
+            <title >Date Completed</title>
+        </field>
+        <field table="wrhwr"
+            name="building_name">
+            <title >Building Name</title>
+        </field>
+        <field table="wrhwr"
+            name="b_number">
+            <title >B-Number</title>
+        </field>
+        <field table="wrhwr"
+            name="status">
+            <title >Status</title>
+        </field>
+        <field table="wrhwr"
+            name="work_team_id">
+            <title >Work Team ID</title>
+        </field>
+        <field table="wrhwr"
+            name="supervisor">
+            <title >Supervisor</title>
+        </field>
+        <field table="wrhwr"
+            name="days_to_completion">
+            <title >Days to Completion</title>
+        </field>
+        <field table="wrhwr"
+            name="completion_benchmark">
+            <title >On Time Benchmark</title>
+        </field>
+        <field table="wrhwr"
+            name="is_on_time">
+            <title >Is on Time</title>
+        </field>
     </panel>
 </view>

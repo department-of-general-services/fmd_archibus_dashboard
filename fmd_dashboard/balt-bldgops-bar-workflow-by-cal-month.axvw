@@ -16,8 +16,8 @@
 				CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
 				'Opened' as action
 			FROM dash_benchmarks
-			WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(month, -1, getDate()))
-				AND date_requested &lt;  DateAdd(month, -1, getDate())
+			WHERE date_requested &gt;= DateAdd(month, -6, getDate())
+				AND date_requested &lt;  getDate()
 		
 			UNION
 
@@ -30,8 +30,8 @@
 				CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120) AS calendar_month,
 				'Closed' as action
 			FROM dash_benchmarks
-			WHERE date_closed &gt;= DateAdd(month, -6, DateAdd(month, -1, getDate()))
-				AND date_closed &lt;  DateAdd(month, -1, getDate())
+			WHERE date_closed &gt;= DateAdd(month, -6, getDate())
+				AND date_closed &lt;  getDate()
 		) benchmarks
 			WHERE calendar_month = ${parameters['summaryMonth']}
 			AND action =  ${parameters['summaryAction']}
@@ -63,23 +63,23 @@
 		<sql dialect="sqlserver">
 		SELECT calendar_month, action, count_wr
 		FROM (
-			SELECT CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month,
+			SELECT calendar_month_request AS calendar_month,
 				'Opened' as action,
-				COUNT(*) as count_wr
+				COUNT(wr_id) as count_wr
 			FROM dash_benchmarks
-			WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(month, -1, getDate()))
-				AND date_requested &lt;  DateAdd(month, -1, getDate())
-			GROUP BY CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120)
+			WHERE date_requested &gt;= DateAdd(month, -6, getDate())
+				AND date_requested &lt;= getDate()
+			GROUP BY calendar_month_request
 
 			UNION
 
-			SELECT CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120) AS calendar_month,
+			SELECT calendar_month_close AS calendar_month,
 				'Closed' as action,
-				COUNT(*) as count_wr
+				COUNT(wr_id) as count_wr
 			FROM dash_benchmarks
-			WHERE date_closed &gt;= DateAdd(month, -6, DateAdd(month, -1, getDate()))
-				AND date_closed &lt;  DateAdd(month, -1, getDate())
-			GROUP BY CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_closed), 0), 120)
+			WHERE date_closed &gt;= DateAdd(month, -6, getDate())
+				AND date_closed &lt;  getDate()
+			GROUP BY calendar_month_close
 
 		) benchmarks
 			WHERE calendar_month = ${parameters['summaryValueForThisGroup']}
@@ -103,10 +103,10 @@
 	<dataSource id="ds_monthly_groupingAxis2"
 		type="grouping">
 		<sql dialect="generic">
-			SELECT CONVERT(VARCHAR(7), DateAdd(month, DateDiff(month, 0, date_requested), 0), 120) AS calendar_month
+			SELECT calendar_month_request AS calendar_month
 			FROM dash_benchmarks
-			WHERE date_requested &gt;= DateAdd(month, -6, DateAdd(month, -1, getDate()))
-				AND date_requested &lt;  DateAdd(month, -1, getDate())
+			WHERE date_requested &gt;= DateAdd(month, -6, getDate())
+				AND date_requested &lt;= getDate()
 		</sql>
 		<table name="wrhwr"
 			role="main" />

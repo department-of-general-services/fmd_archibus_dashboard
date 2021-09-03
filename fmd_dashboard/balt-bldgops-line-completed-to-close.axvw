@@ -17,6 +17,7 @@
             supervisor, 
             work_team_id, 
             weekdays_complete_to_close,
+            closure_benchmark,
             closed_on_time, 
             calendar_month_complete
         FROM
@@ -28,6 +29,10 @@
         <field name="wr_id"
             dataType="text" />
         <field name="date_requested"
+            dataType="date" />
+        <field name="date_completed"
+            dataType="date" />
+        <field name="date_closed"
             dataType="date" />
         <field name="primary_type"
             dataType="text" />
@@ -46,9 +51,10 @@
         <field name="weekdays_complete_to_close"
             dataType="number"
             decimals="0" />
+        <field name="closure_benchmark"
+            dataType="integer"/>
         <field name="closed_on_time"
-            dataType="number"
-            decimals="0" />
+            dataType="integer"/>
         <parameter name="summaryValueForThisGroup"
             dataType="text"
             value=""/>
@@ -78,6 +84,9 @@
         <field name="percent_closed_on_time"
             dataType="number"
             decimals="0" />
+        <sortField name="calendar_month_complete"
+            ascending="true"
+            table="wrhwr"/>
     </dataSource>
 
     <panel id="completed_to_closed"
@@ -182,12 +191,16 @@
             <title >Work Team ID</title>
         </field>
         <field table="wrhwr"
-            name="closed_on_time">
-            <title >Closed on Time</title>
+            name="closure_benchmark">
+            <title >Benchmark for Closing</title>
         </field>
         <field table="wrhwr"
             name="weekdays_complete_to_close">
-            <title >Weekdays to Closure</title>
+            <title >Weekdays From Complete to Close</title>
+        </field>
+        <field table="wrhwr"
+            name="closed_on_time">
+            <title >Closed on Time</title>
         </field>
         <field table="wrhwr"
             name="description">

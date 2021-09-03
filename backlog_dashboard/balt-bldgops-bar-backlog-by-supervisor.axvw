@@ -8,6 +8,7 @@
         SELECT 
             wr_id, 
 			date_requested, 
+            date_completed,
 			primary_type,
 			building_name,
             b_number,
@@ -24,6 +25,8 @@
         <field name="wr_id"
             dataType="text" />
         <field name="date_requested"
+            dataType="date" />
+        <field name="date_completed"
             dataType="date" />
         <field name="primary_type"
             dataType="text" />
@@ -125,6 +128,10 @@
             <title >Date Requested</title>
         </field>
         <field table="wrhwr"
+            name="date_completed">
+            <title >Date Completed</title>
+        </field>
+        <field table="wrhwr"
             name="primary_type">
             <title >Primary Problem Type</title>
         </field>
@@ -143,6 +150,10 @@
         <field table="wrhwr"
             name="supervisor">
             <title >Supervisor</title>
+        </field>
+        <field table="wrhwr"
+            name="work_team_id">
+            <title >Work Team ID</title>
         </field>
         <field table="wrhwr"
             name="description">

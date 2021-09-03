@@ -10,10 +10,10 @@
 			SUM(is_ratio_cm) AS cm_volume,
 			(SUM(is_ratio_cm) + SUM(is_ratio_pm)) AS pm_cm_volume
 		FROM
-			[afm].[dash_kpis]
+			dash_kpis
 		WHERE
-			fy_close = CASE
-				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
+			fy_complete = CASE
+				WHEN datepart(mm, getDate()) &gt;= 7 THEN datepart(yy, getDate()) + 1
 				ELSE datepart(yy, getDate())
 			END 
 		</sql>

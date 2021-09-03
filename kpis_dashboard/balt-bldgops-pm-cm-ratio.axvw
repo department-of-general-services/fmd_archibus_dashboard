@@ -1,7 +1,7 @@
 <view version="2.0">
     <!-- <title>Volume Received per Month</title> -->
 
-    <dataSource id="ds_pm_cm_ratio">
+    <dataSource id="ds_pm_cm_ratio_bar">
         <sql dialect="sqlserver">
         SELECT
             calendar_month_complete,
@@ -29,7 +29,7 @@
     <panel id="pm_cm_ratio"
         type="htmlChart"
         controlType="columnLineChart"
-        dataSource="ds_pm_cm_ratio"
+        dataSource="ds_pm_cm_ratio_bar"
         showLegendOnLoad="false"
         showLegendAsPopUp="false"
         legendLocation="bottom"
@@ -39,7 +39,7 @@
         backgroundColor="0xc6e2ff">
         <title>PM:CM Ratio (HVAC only)</title>
 
-        <groupingAxis dataSource="ds_pm_cm_ratio"
+        <groupingAxis dataSource="ds_pm_cm_ratio_bar"
             table="wrhwr"
             field="calendar_month_complete"
             showLabel="true"
@@ -47,7 +47,7 @@
             <title>Month When Completed</title>
         </groupingAxis>
 
-        <dataAxis dataSource="ds_pm_cm_ratio"
+        <dataAxis dataSource="ds_pm_cm_ratio_bar"
             table="wrhwr"
             field="pm_cm_volume"
             showLabel="true"
@@ -55,7 +55,7 @@
             <title>HVAC Work Requests Completed</title>
         </dataAxis>
 
-        <dataAxis dataSource="ds_pm_cm_ratio"
+        <dataAxis dataSource="ds_pm_cm_ratio_bar"
             table="wrhwr"
             type="line"
             field="pm_cm_ratio"

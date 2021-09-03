@@ -9,11 +9,11 @@
 			CAST(COUNT(wr_id) AS DECIMAL) as total_volume,
 			SUM(is_on_time) as ontime_volume
 		FROM
-			[afm].[dash_kpis]
+			dash_kpis
 		WHERE
 			is_any_pm = 0
 			AND primary_type != 'SMALL_TYPES_DISCARD'
-			AND fy_close = CASE
+			AND fy_complete = CASE
 				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
 				ELSE datepart(yy, getDate())
 			END
@@ -24,14 +24,14 @@
 			CAST(COUNT(wr_id) AS DECIMAL) as total_volume,
 			SUM(is_on_time) as ontime_volume
 		FROM
-			[afm].[dash_kpis]
+			dash_kpis
 		WHERE
 			is_any_pm = 1
 			AND primary_type != 'SMALL_TYPES_DISCARD'
-			AND fy_close = CASE
+			AND fy_complete = CASE
 				WHEN datepart(mm, getDate()) >= 7 THEN datepart(yy, getDate()) + 1
 				ELSE datepart(yy, getDate())
-			END 
+			END
 		</sql>
 		<table name="wrhwr"
 			role="main" />
